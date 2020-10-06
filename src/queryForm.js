@@ -1,0 +1,287 @@
+import React from 'react';
+import * as R from 'ramda';
+
+import bsCustomFileInput from 'bs-custom-file-input';
+
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import Card from 'react-bootstrap/Card';
+
+class ItemSelectorInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onSelectionChange(e.target.value);
+  }
+
+  render() {
+    const items = R.map(
+      (value) => <option key={value}>{value}</option>,
+      this.props.items
+    );
+
+    return (
+      <Form.Group as={Row} controlId={"itemSelector." + this.props.name}>
+        <Form.Label column xs="auto">{this.props.display}</Form.Label>
+        <Col>
+          <Form.Control as="select" onChange={this.handleChange} custom>
+            {items}
+          </Form.Control>
+        </Col>
+      </Form.Group>
+    );
+  }
+}
+
+class ToggledNumericInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCheckedChange = this.handleCheckedChange.bind(this);
+    this.handleValueChange = this.handleValueChange.bind(this);
+  }
+
+  handleValueChange(e) {
+    this.props.onValueChange(e.target.value);
+  }
+
+  handleCheckedChange(e) {
+    this.props.onCheckedChange(e.target.value);
+  }
+
+  render() {
+    return (
+      <Form style={this.props.style} inline>
+        <Form.Check
+          type={"checkbox"}
+          id={"toggledNumericInputCheckbox-" + this.props.name}
+          checked={this.props.checked}
+          label={this.props.display}
+          onChange={this.handleCheckedChange}/>
+        <Form.Control
+          style={{marginLeft: "0.5em"}}
+          type="number"
+          value={this.props.value}
+          disabled={!this.props.checked}
+          onChange={this.handleValueChange}/>
+      </Form>
+    );
+  }
+}
+
+class TextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onTextChange(e.target.value);
+  }
+
+  render() {
+    return (
+      <Form.Group controlId={"textInput" + this.props.name}>
+        <Form.Label>{this.props.display}</Form.Label>
+        <Form.Control as="textarea" rows="3" onChange={this.handleChange}
+                      value={this.props.text}/>
+      </Form.Group>
+    );
+  }
+}
+
+class CheckboxInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onCheckedChange(e.target.value);
+  }
+
+  render() {
+    return (
+      <Form style={this.props.style} inline>
+        <Form.Check
+          type={"checkbox"}
+          id={"checkbox-" + this.props.name}
+          checked={this.props.checked}
+          label={this.props.display}
+          onChange={this.handleChange}/>
+      </Form>
+    );
+  }
+}
+
+class FileInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  handleChange(e) {
+    this.props.onFileChange(e.target.value);
+  }
+
+  render() {
+    return (
+      <Form.File
+        type={"checkbox"}
+        id={"file-input-" + this.props.name}
+        label={this.props.display}
+        onChange={this.handleChange}
+        custom/>
+    );
+  }
+}
+
+class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleQueryTextChange = this.handleQueryTextChange.bind(this);
+    this.handleFlankingCheckedChange = this.handleFlankingCheckedChange.bind(this);
+    this.handleFlankingValueChange = this.handleFlankingValueChange.bind(this);
+    this.handleTopNCheckedChange = this.handleTopNCheckedChange.bind(this);
+    this.handleTopNValueChange = this.handleTopNValueChange.bind(this);
+    this.handleFilterAnnotatedChange = this.handleFilterAnnotatedChange.bind(this);
+
+    this.available_organisms = ["hg38", "ce11"];
+    this.available_enzymes = ["cas9", "spaCas9"];
+
+    this.state = {
+      selection: this.available_organisms[0],
+      enzyme: this.available_enzymes[0],
+      query_text: "chrIV:1100-1102",
+      flanking: {
+        enabled: false,
+        value: 1000
+      },
+      top_n: {
+        enabled: false,
+        value: 5,
+      },
+      filter_annotated_grnas: false,
+      fileInput: React.createRef()
+    };
+
+    this.onFormSubmit = this.onFormSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    bsCustomFileInput.init();
+  }
+  
+  handleFilterAnnotatedChange(t) {
+    this.setState({filter_annotated_grnas: !this.state.filter_annotated_grnas});
+  }
+
+  handleQueryTextChange(t) {
+    this.setState({query_text: t});
+  }
+
+  handleFlankingCheckedChange(t) {
+    const flanking = R.assoc("enabled", !this.state.flanking.enabled, this.state.flanking);
+    this.setState({flanking: flanking});
+  }
+
+  handleFlankingValueChange(t) {
+    const flanking = R.assoc("value", t, this.state.flanking);
+    this.setState({flanking: flanking});
+  }
+
+  handleTopNCheckedChange(t) {
+    const top_n = R.assoc("enabled", !this.state.top_n.enabled, this.state.top_n);
+    this.setState({top_n: top_n});
+  }
+
+  handleTopNValueChange(t) {
+    const top_n = R.assoc("value", t, this.state.top_n);
+    this.setState({top_n: top_n});
+  }
+
+  onFormSubmit() {
+    this.props.handleSubmit(this.state);
+  }
+
+  render() {
+    const italics_style = {fontStyle: "italic"};
+    const center_style = {textAlign: "center"};
+    const padding_style = (p) => ({padding: p});
+    const margin_style = (m) => ({margin: m});
+
+    return (
+      <Container>
+        <Card style={padding_style("2em")} className="bg-light">
+          <h4 style={italics_style}>sgRNA Design Tool</h4>
+          <Row>
+            <Col>
+              <ItemSelectorInput onSelectionChange={(v) => alert(v)}
+                name="organism-selector"
+                display="Organism:"
+                items={this.available_organisms}/>
+                <ToggledNumericInput
+                  style={margin_style("0 0em 0.75em 0")}
+                  onCheckedChange={this.handleFlankingCheckedChange}
+                  onValueChange={this.handleFlankingValueChange}
+                  name="flanking-input"
+                  checked={this.state.flanking.enabled}
+                  value={this.state.flanking.value}
+                  display="Flanking:"/>
+                <CheckboxInput
+                  style={margin_style("0 0 1.5em 0")}
+                  onCheckedChange={this.handleFilterAnnotatedChange}
+                  name="filter-annotated"
+                  checked={this.state.filter_annotated_grnas}
+                  display="Filter annotated gRNAs"/>
+            </Col>
+            <Col>
+              <ItemSelectorInput onSelectionChange={(v) => alert(v)}
+                name="enzyme-selector"
+                display="Enzyme:"
+                items={this.available_enzymes}/>
+                <ToggledNumericInput
+                  style={margin_style("0 1em 1em 0")}
+                  onCheckedChange={this.handleTopNCheckedChange}
+                  onValueChange={this.handleTopNValueChange}
+                  name="topn-input"
+                  checked={this.state.top_n.enabled}
+                  value={this.state.top_n.value}
+                  display="Top N Queries:"/>
+            </Col>
+          </Row>
+          <TextInput
+            display={<h6>Input genomic coordinates as chromosome:start-end or organism
+            appropriate gene symbol, one per line:</h6>}
+            onTextChange={this.handleQueryTextChange}
+            text={this.state.query_text}/>
+          <h2 style={R.merge(italics_style, center_style)}>
+            OR
+          </h2>
+          <div class="custom-file">
+            <input id="fileInput" type="file" class="custom-file-input"
+                   ref={this.state.fileInput}/>
+            <label class="custom-file-label" for="fileInput">
+              Submit BED, GFF/GTF, FASTA, or TXT files containing genomic coordinates.
+            </label>
+          </div>
+          <Row className="justify-content-md-center">
+            <Button 
+              style={{marginTop: "1em"}}
+              variant="primary" onClick={this.onFormSubmit}>
+              Submit query
+            </Button>
+          </Row>
+        </Card>
+      </Container>
+    );
+  }
+}
+
+export default QueryForm;
