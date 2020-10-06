@@ -30,7 +30,8 @@ class ItemSelectorInput extends React.Component {
       <Form.Group as={Row} controlId={"itemSelector." + this.props.name}>
         <Form.Label column xs="auto">{this.props.display}</Form.Label>
         <Col>
-          <Form.Control as="select" onChange={this.handleChange} custom>
+          <Form.Control as="select" onChange={this.handleChange}
+                        value={this.props.selection}custom>
             {items}
           </Form.Control>
         </Col>
@@ -119,28 +120,6 @@ class CheckboxInput extends React.Component {
   }
 }
 
-class FileInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.handleChange = this.handleChange.bind(this);
-  }
-
-  handleChange(e) {
-    this.props.onFileChange(e.target.value);
-  }
-
-  render() {
-    return (
-      <Form.File
-        type={"checkbox"}
-        id={"file-input-" + this.props.name}
-        label={this.props.display}
-        onChange={this.handleChange}
-        custom/>
-    );
-  }
-}
-
 class QueryForm extends React.Component {
   constructor(props) {
     super(props);
@@ -151,12 +130,14 @@ class QueryForm extends React.Component {
     this.handleTopNCheckedChange = this.handleTopNCheckedChange.bind(this);
     this.handleTopNValueChange = this.handleTopNValueChange.bind(this);
     this.handleFilterAnnotatedChange = this.handleFilterAnnotatedChange.bind(this);
+    this.handleOrganismSelectionChange = this.handleOrganismSelectionChange.bind(this);
+    this.handleEnzymeSelectionChange = this.handleEnzymeSelectionChange.bind(this);
 
     this.available_organisms = ["hg38", "ce11"];
     this.available_enzymes = ["cas9", "spaCas9"];
 
     this.state = {
-      selection: this.available_organisms[0],
+      organism: this.available_organisms[0],
       enzyme: this.available_enzymes[0],
       query_text: "chrIV:1100-1102",
       flanking: {
@@ -177,7 +158,15 @@ class QueryForm extends React.Component {
   componentDidMount() {
     bsCustomFileInput.init();
   }
-  
+
+  handleOrganismSelectionChange(t) {
+    this.setState({organism: t});
+  }
+
+  handleEnzymeSelectionChange(t) {
+    this.setState({enzyme: t});
+  }
+
   handleFilterAnnotatedChange(t) {
     this.setState({filter_annotated_grnas: !this.state.filter_annotated_grnas});
   }
@@ -222,38 +211,42 @@ class QueryForm extends React.Component {
           <h4 style={italics_style}>sgRNA Design Tool</h4>
           <Row>
             <Col>
-              <ItemSelectorInput onSelectionChange={(v) => alert(v)}
+              <ItemSelectorInput
+                onSelectionChange={this.handleOrganismSelectionChange}
+                selection={this.state.organism}
                 name="organism-selector"
                 display="Organism:"
                 items={this.available_organisms}/>
-                <ToggledNumericInput
-                  style={margin_style("0 0em 0.75em 0")}
-                  onCheckedChange={this.handleFlankingCheckedChange}
-                  onValueChange={this.handleFlankingValueChange}
-                  name="flanking-input"
-                  checked={this.state.flanking.enabled}
-                  value={this.state.flanking.value}
-                  display="Flanking:"/>
-                <CheckboxInput
-                  style={margin_style("0 0 1.5em 0")}
-                  onCheckedChange={this.handleFilterAnnotatedChange}
-                  name="filter-annotated"
-                  checked={this.state.filter_annotated_grnas}
-                  display="Filter annotated gRNAs"/>
+              <ToggledNumericInput
+                style={margin_style("0 0em 0.75em 0")}
+                onCheckedChange={this.handleFlankingCheckedChange}
+                onValueChange={this.handleFlankingValueChange}
+                name="flanking-input"
+                checked={this.state.flanking.enabled}
+                value={this.state.flanking.value}
+                display="Flanking:"/>
+              <CheckboxInput
+                style={margin_style("0 0 1.5em 0")}
+                onCheckedChange={this.handleFilterAnnotatedChange}
+                name="filter-annotated"
+                checked={this.state.filter_annotated_grnas}
+                display="Filter annotated gRNAs"/>
             </Col>
             <Col>
-              <ItemSelectorInput onSelectionChange={(v) => alert(v)}
+              <ItemSelectorInput
+                onSelectionChange={this.handleEnzymeSelectionChange}
+                selection={this.state.enzyme}
                 name="enzyme-selector"
                 display="Enzyme:"
-                items={this.available_enzymes}/>
-                <ToggledNumericInput
-                  style={margin_style("0 1em 1em 0")}
-                  onCheckedChange={this.handleTopNCheckedChange}
-                  onValueChange={this.handleTopNValueChange}
-                  name="topn-input"
-                  checked={this.state.top_n.enabled}
-                  value={this.state.top_n.value}
-                  display="Top N Queries:"/>
+                items={this.available_enzymes} />
+              <ToggledNumericInput
+                style={margin_style("0 1em 1em 0")}
+                onCheckedChange={this.handleTopNCheckedChange}
+                onValueChange={this.handleTopNValueChange}
+                name="topn-input"
+                checked={this.state.top_n.enabled}
+                value={this.state.top_n.value}
+                display="Top N Queries:" />
             </Col>
           </Row>
           <TextInput
@@ -264,10 +257,10 @@ class QueryForm extends React.Component {
           <h2 style={R.merge(italics_style, center_style)}>
             OR
           </h2>
-          <div class="custom-file">
-            <input id="fileInput" type="file" class="custom-file-input"
+          <div className="custom-file">
+            <input id="fileInput" type="file" className="custom-file-input"
                    ref={this.state.fileInput}/>
-            <label class="custom-file-label" for="fileInput">
+            <label className="custom-file-label" htmlFor="fileInput">
               Submit BED, GFF/GTF, FASTA, or TXT files containing genomic coordinates.
             </label>
           </div>

@@ -1,5 +1,4 @@
 import React from 'react';
-import * as R from 'ramda';
 import './app.scss';
 import QueryForm from './queryForm.js';
 
@@ -9,19 +8,42 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
+import {
+  Switch,
+  Route,
+  Link,
+  useRouteMatch
+} from 'react-router-dom';
+
+function ActiveBreadcrumbItem(props) {
+  const match = useRouteMatch({
+    path: props.path,
+    exact: props.exact
+  });
+
+  const link = (
+    !match
+      ? <Link className="breadcrumb-item" to={props.path}>{props.label}</Link>
+      : <span className='breadcrumb-item active'>{props.label}</span>
+  );
+
+  return link;
+}
+
 function NavigationBar() {
   return (
     <Breadcrumb>
-      <Breadcrumb.Item active >Home</Breadcrumb.Item>
-      <Breadcrumb.Item href="#">Help</Breadcrumb.Item>
-      <Breadcrumb.Item href="#">Contact</Breadcrumb.Item>
+      <ActiveBreadcrumbItem path="/" exact={true} label="Home" />
+      <ActiveBreadcrumbItem path="/about" label="About" />
+      <ActiveBreadcrumbItem path="/contact" label="Contact" />
     </Breadcrumb>
   );
 }
 
 function DoubleHelix(props) {
   return (
-    <img src="/img/helix.png" width={props.width} height={props.height}/>
+    <img src="/img/helix.png" width={props.width} height={props.height}
+         alt="double helix"/>
   );
 }
 
@@ -42,13 +64,21 @@ function GuidescanJumbotron() {
     </Container>
   );
 }
-function App() {
 
+function App() {
   return (
     <div className="App">
       <NavigationBar/>
       <GuidescanJumbotron/>
-      <QueryForm/>
+      <Switch>
+        <Route exact path="/">
+          <QueryForm handleSubmit={console.log}/>
+        </Route>
+        <Route path="/about">
+        </Route>
+        <Route path="/contact">
+        </Route>
+      </Switch>
     </div>
   );
 }
