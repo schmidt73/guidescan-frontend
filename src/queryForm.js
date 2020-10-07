@@ -133,8 +133,8 @@ class QueryForm extends React.Component {
     this.handleOrganismSelectionChange = this.handleOrganismSelectionChange.bind(this);
     this.handleEnzymeSelectionChange = this.handleEnzymeSelectionChange.bind(this);
 
-    this.available_organisms = ["hg38", "ce11"];
-    this.available_enzymes = ["cas9", "spaCas9"];
+    this.available_organisms = ["ce11"];
+    this.available_enzymes = ["cas9"];
 
     this.state = {
       organism: this.available_organisms[0],

@@ -85,10 +85,11 @@ class QuitableToast extends React.Component {
         <Toast
           show={this.props.show && !this.state.closed}
           onClose={this.onClose}
+          animation="true"
           style={{
             position: 'absolute',
-            top: '3em',
-            right: '3em',
+            bottom: '3em',
+            left: '3em',
           }}
           >
           <Toast.Header>
@@ -138,19 +139,19 @@ class App extends React.Component {
 
     let success_toast = (
       <QuitableToast
-        show={this.state.query.state == QueryState.SUCCESS}
+        show={this.state.query.state === QueryState.SUCCESS}
         text="Successfully submitted query."/>
     );
 
     let failure_toast = (
       <QuitableToast
-        show={this.state.query.state == QueryState.FAILURE}
+        show={this.state.query.state === QueryState.FAILURE}
         text="Failure to submit query."/>
     );
 
     let page_selector = null;
-    if (this.state.query.state == QueryState.SUCCESS) {
-      const job_id = this.state.query.response.data.data["job-id"];
+    if (this.state.query.state === QueryState.SUCCESS) {
+      const job_id = this.state.query.response.data["job-id"];
       page_selector = <Redirect to={"/job/" + job_id}/>;
     }
 
@@ -167,7 +168,8 @@ class App extends React.Component {
           </Route>
           <Route exact path="/contact">
           </Route>
-          <Route path='/job/:id'>
+          <Route exact path='/job/:id'
+                 render={({match}) => (<job.JobPage id={match.params.id}/>)}>
           </Route>
         </Switch>
         {success_toast}
