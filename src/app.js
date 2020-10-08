@@ -16,7 +16,8 @@ import {
   Route,
   Redirect,
   Link,
-  useRouteMatch
+  useRouteMatch,
+  withRouter
 } from 'react-router-dom';
 
 function ActiveBreadcrumbItem(props) {
@@ -83,6 +84,7 @@ class QuitableToast extends React.Component {
   render() {
     return (
         <Toast
+          className={this.props.className}
           show={this.props.show && !this.state.closed}
           onClose={this.onClose}
           animation="true"
@@ -139,12 +141,14 @@ class App extends React.Component {
 
     let success_toast = (
       <QuitableToast
+        className="bg-success"
         show={this.state.query.state === QueryState.SUCCESS}
         text="Successfully submitted query."/>
     );
 
     let failure_toast = (
       <QuitableToast
+        className="bg-failure"
         show={this.state.query.state === QueryState.FAILURE}
         text="Failure to submit query."/>
     );
@@ -179,4 +183,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default withRouter(App);
