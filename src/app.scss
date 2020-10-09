@@ -10,4 +10,6 @@ html {
   border-radius: 0 !important;
 }
 
+@import "./styles/variables.scss";
 @import "../node_modules/bootstrap/scss/bootstrap";
+@import "./styles/bootswatch.scss";

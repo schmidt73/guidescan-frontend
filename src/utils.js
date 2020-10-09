@@ -13,4 +13,4 @@ function immutableSetState(obj, state) {
   }
 }
 
-export default immutableSetState;
+export {immutableSetState};

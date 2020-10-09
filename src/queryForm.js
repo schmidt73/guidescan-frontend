@@ -88,7 +88,7 @@ class TextInput extends React.Component {
   render() {
     return (
       <Form.Group controlId={"textInput" + this.props.name}>
-        <Form.Label>{this.props.display}</Form.Label>
+        <Form.Label style={{}}>{this.props.display}</Form.Label>
         <Form.Control as="textarea" rows="3" onChange={this.handleChange}
                       value={this.props.text}/>
       </Form.Group>
@@ -208,7 +208,7 @@ class QueryForm extends React.Component {
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h4 style={italics_style}>sgRNA Design Tool</h4>
+          <h4 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>sgRNA Design Tool</h4>
           <Row>
             <Col>
               <ItemSelectorInput
@@ -250,8 +250,8 @@ class QueryForm extends React.Component {
             </Col>
           </Row>
           <TextInput
-            display={<h6>Input genomic coordinates as chromosome:start-end or organism
-            appropriate gene symbol, one per line:</h6>}
+            display={"Input genomic coordinates as chromosome:start-end or organism \
+                      appropriate gene symbol, one per line:"}
             onTextChange={this.handleQueryTextChange}
             text={this.state.query_text}/>
           <h2 style={R.merge(italics_style, center_style)}>

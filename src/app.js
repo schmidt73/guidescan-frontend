@@ -9,7 +9,8 @@ import Col from 'react-bootstrap/Col';
 
 import './app.scss';
 import QueryForm from './queryForm.js';
-import job from './job.js';
+import {submitQuery} from 'jobs/rest';
+import {JobPage} from 'jobs/jobPage';
 
 import {
   Switch,
@@ -134,50 +135,48 @@ class App extends React.Component {
   }
 
   render() {
-    const submitQuery = (query_state) =>
-          job.submitQuery(this.handleSuccessfulQuery,
-                          this.handleFailedQuery,
-                          query_state);
+    const submitCallback = (queryState) =>
+          submitQuery(this.handleSuccessfulQuery,
+                      this.handleFailedQuery,
+                      queryState);
 
-    let success_toast = (
+    let successToast = (
       <QuitableToast
-        className="bg-success"
         show={this.state.query.state === QueryState.SUCCESS}
         text="Successfully submitted query."/>
     );
 
-    let failure_toast = (
+    let failureToast = (
       <QuitableToast
-        className="bg-failure"
         show={this.state.query.state === QueryState.FAILURE}
         text="Failure to submit query."/>
     );
 
-    let page_selector = null;
+    let pageSelector = null;
     if (this.state.query.state === QueryState.SUCCESS) {
-      const job_id = this.state.query.response.data["job-id"];
-      page_selector = <Redirect to={"/job/" + job_id}/>;
+      const jobId = this.state.query.response.data["job-id"];
+      pageSelector = <Redirect to={"/job/" + jobId}/>;
     }
 
     return (
       <div className="App">
         <NavigationBar/>
         <GuidescanJumbotron/>
-        {page_selector}
+        {pageSelector}
         <Switch>
           <Route exact path="/">
-            <QueryForm handleSubmit={submitQuery}/>
+            <QueryForm handleSubmit={submitCallback}/>
           </Route>
           <Route exact path="/about">
           </Route>
           <Route exact path="/contact">
           </Route>
           <Route exact path='/job/:id'
-                 render={({match}) => (<job.JobPage id={match.params.id}/>)}>
+                 render={({match}) => (<JobPage id={match.params.id}/>)}>
           </Route>
         </Switch>
-        {success_toast}
-        {failure_toast}
+        {successToast}
+        {failureToast}
       </div>
     );
   }
