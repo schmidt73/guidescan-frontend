@@ -1,5 +1,4 @@
-import {JobResultsTable} from 'jobs/resultsTable';
-import {JobResultsContainer} from 'jobs/results';
+import {JobCompletedPage} from 'jobs/completedPage';
 import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';
@@ -118,15 +117,7 @@ class JobPage extends React.Component {
       break;
     case JobStatus.COMPLETED:
       page = (
-        <>
-          <h2 style={center_style}>Job Results</h2>
-          <hr/>
-          <JobResultsContainer id={this.props.id}>
-            <GenomeBrowser id={this.props.id}/>
-            <hr/>
-            <JobResultsTable/>
-          </JobResultsContainer>
-        </>
+        <JobCompletedPage id={this.props.id}/>
       );
       break;
     default:
