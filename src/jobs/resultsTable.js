@@ -72,25 +72,25 @@ function JobResultsTable(props) {
   case JobResultsState.RECEIVED:
     processJobResults(props.jobResults.data);
     page = props.jobResults.data.map((queryResult) => (
-        <React.Fragment key={queryResult[0].name}>
+      <React.Fragment key={queryResult[0].name}>
         <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0].name}</h4>
         <BootstrapTable keyField='coordinate' data={queryResult[1]}
-      striped={true}
-      columns={JobResultsTableColumns}
-      pagination={paginationFactory()} />
-        </React.Fragment>
+                        striped={true}
+                        columns={JobResultsTableColumns}
+                        pagination={paginationFactory()} />
+      </React.Fragment>
     ));
     break;
   case JobResultsState.ERROR:
     page = (
-        <div className="alert alert-danger">
+      <div className="alert alert-danger">
         Error loading results.
-        </div>
+      </div>
     );
     break;
   default:
     page = (
-        <div className="alert alert-warning">
+      <div className="alert alert-warning">
         {"Job Results are currently pending..."}
       </div>
     );

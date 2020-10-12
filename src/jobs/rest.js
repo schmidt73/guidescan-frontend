@@ -33,7 +33,7 @@ function submitQuery(success_callback, error_callback, data) {
   }
 
   const source = axios.CancelToken.source();
-  axios.post('http://localhost:8000/query', formData, {
+  axios.post('http://localhost:3000/query', formData, {
     cancelToken: source.token,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -45,7 +45,7 @@ function submitQuery(success_callback, error_callback, data) {
 
 function getJobStatus(success_callback, error_callback, job_id) {
   const source = axios.CancelToken.source();
-  axios.get('http://localhost:8000/job/status/' + job_id, {
+  axios.get('http://localhost:3000/job/status/' + job_id, {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);
@@ -54,7 +54,7 @@ function getJobStatus(success_callback, error_callback, job_id) {
 
 function getJobResults(success_callback, error_callback, format, job_id) {
   const source = axios.CancelToken.source();
-  axios.get('http://localhost:8000/job/result/' + format + '/' + job_id, {
+  axios.get('http://localhost:3000/job/result/' + format + '/' + job_id, {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);

@@ -22,7 +22,7 @@ import Card from 'react-bootstrap/Card';
 
 
 function downloadResults(id, format) {
-  axios.get(`http://localhost:8000/job/result/${format}/${id}`)
+  axios.get(`http://localhost:3000/job/result/${format}/${id}`)
     .then((response) => {
       fileDownload(R.is(Object, response.data) ?
                    JSON.stringify(response.data) : response.data,
