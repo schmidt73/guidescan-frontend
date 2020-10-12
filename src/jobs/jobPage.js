@@ -1,4 +1,6 @@
 import {JobResultsTable} from 'jobs/resultsTable';
+import {JobResultsContainer} from 'jobs/results';
+import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';
 import {getJobStatus, submitQuery} from 'jobs/rest';
@@ -119,7 +121,11 @@ class JobPage extends React.Component {
         <>
           <h2 style={center_style}>Job Results</h2>
           <hr/>
-          <JobResultsTable id={this.props.id}/>
+          <JobResultsContainer id={this.props.id}>
+            <GenomeBrowser id={this.props.id}/>
+            <hr/>
+            <JobResultsTable/>
+          </JobResultsContainer>
         </>
       );
       break;

@@ -139,7 +139,7 @@ class QueryForm extends React.Component {
     this.state = {
       organism: this.available_organisms[0],
       enzyme: this.available_enzymes[0],
-      query_text: "chrIV:1100-1102",
+      query_text: "chrIV:1100-45000",
       flanking: {
         enabled: false,
         value: 1000

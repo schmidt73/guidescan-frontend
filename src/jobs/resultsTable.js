@@ -1,11 +1,11 @@
 import * as R from 'ramda';
 
-import {immutableSetState} from 'utils';
-import {getJobResults} from 'jobs/rest';
-
 import React from 'react';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from 'react-bootstrap-table-next';
+
+import {immutableSetState} from 'utils';
+import {JobResultsState} from 'jobs/results';
 
 function offTargetSummary(off_targets) {
   let summary = {};
@@ -65,79 +65,38 @@ const JobResultsTableColumns =
     sort: true
   }];
 
-const JobResults = {
-  PENDING:  1,
-  ERROR:    2,
-  RECEIVED: 3,
-};
+function JobResultsTable(props) {
+  let page = null;
 
-class JobResultsTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.onLoadSuccess = this.onLoadSuccess.bind(this);
-    this.onLoadFailure = this.onLoadFailure.bind(this);
-
-    this.loadJobResults = (id) =>
-      getJobResults(this.onLoadSuccess,
-                    this.onLoadFailure,
-                    'json', id);
-
-    this.state = {
-      status: JobResults.PENDING
-    };
-  }
-
-  componentDidMount() {
-    this.loadSource = this.loadJobResults(this.props.id);
-  }
-
-  componentWillUnmount() {
-    this.loadSource.cancel();
-  }
-
-  onLoadSuccess(response) {
-    processJobResults(response.data);
-    immutableSetState(this, {status: JobResults.RECEIVED,
-                             data: response.data});
-  }
-
-  onLoadFailure(error) {
-    immutableSetState(this, {status: JobResults.ERROR});
-  }
-
-  render() {
-    let page = null;
-
-    switch (this.state.status) {
-    case JobResults.RECEIVED:
-      page = this.state.data.map((queryResult) => (
+  switch (props.jobResults.status) {
+  case JobResultsState.RECEIVED:
+    processJobResults(props.jobResults.data);
+    page = props.jobResults.data.map((queryResult) => (
         <React.Fragment key={queryResult[0].name}>
-          <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0].name}</h4>
-          <BootstrapTable keyField='coordinate' data={queryResult[1]}
-                          striped={true}
-                          columns={JobResultsTableColumns}
-                          pagination={paginationFactory()} />
+        <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0].name}</h4>
+        <BootstrapTable keyField='coordinate' data={queryResult[1]}
+      striped={true}
+      columns={JobResultsTableColumns}
+      pagination={paginationFactory()} />
         </React.Fragment>
-      ));
-      break;
-    case JobResults.ERROR:
-      page = (
+    ));
+    break;
+  case JobResultsState.ERROR:
+    page = (
         <div className="alert alert-danger">
-          Error loading results.
+        Error loading results.
         </div>
-      );
-      break;
-    default:
-      page = (
+    );
+    break;
+  default:
+    page = (
         <div className="alert alert-warning">
-          {"Job Results are currently pending..."}
-        </div>
-      );
-    }
-
-    return page;
+        {"Job Results are currently pending..."}
+      </div>
+    );
   }
+
+  return page;
 }
 
 export {JobResultsTable};
