@@ -31,7 +31,7 @@ Once the REST API back-end is up and running,
 execute the following sequence of commands to set up the front-end:
 ``` shell
 $ export REACT_APP_REST_URL=https://www.guidescan.com:8000
-$ npm build
+$ npm run-script build
 $ serve build
 ```
 

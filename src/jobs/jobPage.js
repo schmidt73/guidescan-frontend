@@ -57,7 +57,7 @@ class JobPage extends React.Component {
   }
 
   onJobStatusError(error) {
-    this.setState({job_status: JobStatus.NOT_FOUND});
+    immutableSetState(this, {job_status: JobStatus.NOT_FOUND});
 
   }
 
