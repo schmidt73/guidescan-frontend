@@ -1,6 +1,6 @@
 # Guidescan 2.0 Front-end
 
-![Guidescan 2.0 Front-end](https://imgur.com/a/9RR6puN)
+![Guidescan 2.0 Front-end](https://i.imgur.com/NsvFzIm.mp4)
 
 This is the front-end for the Guidescan 2.0 project. It relies on the
 REST API back-end to be running. That project is located here:
