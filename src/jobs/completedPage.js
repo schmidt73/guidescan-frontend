@@ -20,9 +20,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
-
 function downloadResults(id, format) {
-  axios.get(`http://localhost:3000/job/result/${format}/${id}`)
+  axios.get(process.env.REACT_APP_REST_URL + `/job/result/${format}/${id}`)
     .then((response) => {
       fileDownload(R.is(Object, response.data) ?
                    JSON.stringify(response.data) : response.data,

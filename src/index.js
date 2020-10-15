@@ -1,8 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './app';
 import { HashRouter } from 'react-router-dom';
+import { program } from 'commander';
+
 import * as serviceWorker from './serviceWorker';
+import App from './app';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -17,3 +19,4 @@ ReactDOM.render(
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
+
