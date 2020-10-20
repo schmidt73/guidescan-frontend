@@ -17,7 +17,7 @@ function offTargetSummary(off_targets) {
 }
 
 function processgRNA(chr, gRNA) {
-  const strand = (gRNA.strand === "positive") ? "+" : "-";
+  const strand = (gRNA.direction === "positive") ? "+" : "-";
   gRNA.coordinate = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
   const offTargets = gRNA["off-targets"];
   const summary = offTargetSummary(offTargets);

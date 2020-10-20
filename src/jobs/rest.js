@@ -19,13 +19,11 @@ function submitQuery(success_callback, error_callback, data) {
   formData.append("mode", mode);
 
   if (data.flanking.enabled) {
-    formData.append("flanking-value", data.flanking.value);
-    formData.append("flanking", true);
+    formData.append("flanking", data.flanking.value);
   }
 
   if (data.top_n.enabled) {
-    formData.append("topn-value", data.top_n.value);
-    formData.append("topn", true);
+    formData.append("topn", data.top_n.value);
   }
 
   if (data.fileInput.current.files.length > 0) {

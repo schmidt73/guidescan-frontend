@@ -111,7 +111,13 @@ class JobPage extends React.Component {
         <>
           <h4 style={center_style}>Job Failed</h4>
           <hr/>
-          <div className="alert alert-danger">{this.state.job_err_msg}</div>
+          <div className="alert alert-danger">
+            {
+              this.state.job_err_msg.split('\n').map(
+                (item, key) => <React.Fragment key={key}>{item}<br/></React.Fragment>
+              )
+            }
+          </div>
         </>
       );
       break;

@@ -3,12 +3,15 @@ import React from 'react';
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import Toast from 'react-bootstrap/Toast';
+import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import './app.scss';
 import QueryForm from './queryForm.js';
+import {AboutPage} from 'aboutPage';
+import {ContactPage} from 'contactPage';
 import {submitQuery} from 'jobs/rest';
 import {JobPage} from 'jobs/jobPage';
 
@@ -34,6 +37,30 @@ function ActiveBreadcrumbItem(props) {
   );
 
   return link;
+}
+
+function CitationBox() {
+  const box_style = {padding: "2em 2em 1em 2em", margin: "2em 0 2em 0"};
+  return (
+    <Container>
+      <Card style={box_style}>
+        <h5>Citation</h5>
+        <hr/>
+        <p style={{fontSize: "1.1em"}}>
+          Perez, A. R., Pritykin, Y., Vidigal, J. A.,
+          Chhangawala, S., Zamparo, L., Leslie, C. S., & Ventura,
+          A. (2017). <br/>
+
+          GuideScan software for improved single and paired
+          CRISPR guide RNA design. <br/>
+
+          <i>
+            Nature biotechnology
+          </i>&#44; 35 (4), 347-349.  
+        </p>
+      </Card>
+    </Container>
+  );
 }
 
 function NavigationBar() {
@@ -166,10 +193,13 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/">
             <QueryForm handleSubmit={submitCallback}/>
+            <CitationBox/>
           </Route>
           <Route exact path="/about">
+            <AboutPage/>
           </Route>
           <Route exact path="/contact">
+            <ContactPage/>
           </Route>
           <Route exact path='/job/:id'
                  render={({match}) => (<JobPage id={match.params.id}/>)}>

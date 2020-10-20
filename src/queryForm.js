@@ -208,7 +208,7 @@ class QueryForm extends React.Component {
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h4 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>sgRNA Design Tool</h4>
+          <h3 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>sgRNA Design Tool</h3>
           <Row>
             <Col>
               <ItemSelectorInput
@@ -230,7 +230,7 @@ class QueryForm extends React.Component {
                 onCheckedChange={this.handleFilterAnnotatedChange}
                 name="filter-annotated"
                 checked={this.state.filter_annotated_grnas}
-                display="Filter annotated gRNAs"/>
+                display="Filter exonic cutting gRNAs"/>
             </Col>
             <Col>
               <ItemSelectorInput
