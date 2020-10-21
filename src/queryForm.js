@@ -1,6 +1,9 @@
 import React from 'react';
 import * as R from 'ramda';
 
+import {getInfoSupported} from 'jobs/rest';
+import {immutableSetState} from 'utils';
+
 import bsCustomFileInput from 'bs-custom-file-input';
 
 import Form from 'react-bootstrap/Form';
@@ -133,10 +136,20 @@ class QueryForm extends React.Component {
     this.handleOrganismSelectionChange = this.handleOrganismSelectionChange.bind(this);
     this.handleEnzymeSelectionChange = this.handleEnzymeSelectionChange.bind(this);
 
+    this.onLoadInfoSuccess = this.onLoadInfoSuccess.bind(this);
+    this.onLoadInfoFailure = this.onLoadInfoFailure.bind(this);
+
+    this.loadInfoSupported = () =>
+      getInfoSupported(this.onLoadInfoSuccess,
+                       this.onLoadInfoFailure,
+                       'json');
+
     this.available_organisms = ["ce11"];
     this.available_enzymes = ["cas9"];
 
     this.state = {
+      available_organisms: [],
+      available_enzymes: [],
       organism: this.available_organisms[0],
       enzyme: this.available_enzymes[0],
       query_text: "chrIV:1100-45000",
@@ -157,6 +170,19 @@ class QueryForm extends React.Component {
 
   componentDidMount() {
     bsCustomFileInput.init();
+    this.loadSource = this.loadInfoSupported();
+  }
+
+  componentWillUnmount() {
+    this.loadSource.cancel();
+  }
+
+  onLoadInfoSuccess(response) {
+    immutableSetState(this, {available_organisms: response.data["available-organisms"],
+                             available_enzymes: response.data["available-enzymes"]});
+  }
+
+  onLoadInfoFailure(error) {
   }
 
   handleOrganismSelectionChange(t) {
@@ -216,7 +242,7 @@ class QueryForm extends React.Component {
                 selection={this.state.organism}
                 name="organism-selector"
                 display="Organism:"
-                items={this.available_organisms}/>
+                items={this.state.available_organisms}/>
               <ToggledNumericInput
                 style={margin_style("0 0em 0.75em 0")}
                 onCheckedChange={this.handleFlankingCheckedChange}
@@ -238,7 +264,7 @@ class QueryForm extends React.Component {
                 selection={this.state.enzyme}
                 name="enzyme-selector"
                 display="Enzyme:"
-                items={this.available_enzymes} />
+                items={this.state.available_enzymes} />
               <ToggledNumericInput
                 style={margin_style("0 1em 1em 0")}
                 onCheckedChange={this.handleTopNCheckedChange}

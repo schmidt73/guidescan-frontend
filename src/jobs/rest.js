@@ -61,4 +61,13 @@ function getJobResults(success_callback, error_callback, format, job_id) {
   return source;
 }
 
-export {getJobResults, getJobStatus, submitQuery};
+function getInfoSupported(success_callback, error_callback) {
+  const source = axios.CancelToken.source();
+  axios.get(process.env.REACT_APP_REST_URL + '/info/supported', {
+    cancelToken: source.token
+  }).then(success_callback)
+    .catch(error_callback);
+  return source;
+}
+
+export {getJobResults, getJobStatus, getInfoSupported, submitQuery};
