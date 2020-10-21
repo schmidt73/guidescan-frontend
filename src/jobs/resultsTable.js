@@ -1,10 +1,7 @@
-import * as R from 'ramda';
-
 import React from 'react';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from 'react-bootstrap-table-next';
 
-import {immutableSetState} from 'utils';
 import {JobResultsState} from 'jobs/results';
 
 function offTargetSummary(off_targets) {
@@ -24,6 +21,22 @@ function processgRNA(chr, gRNA) {
   gRNA["num-off-targets"] = offTargets ? offTargets.length : 0;
   gRNA["off-target-summary"] = "2:" + (summary[2] || 0) +
     " | 3:" + (summary[3] || 0);
+
+  if (gRNA["annotations"].length > 0) {
+    console.log(gRNA["annotations"]);
+    let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr[1])));
+    gRNA["annotations"] = uniqueAnnotations.join("\n");
+  } else {
+    gRNA["annotations"] = "None"
+  }
+
+  if (!("specificity" in gRNA)) {
+    gRNA["specificity"] = "N/A";
+  }
+
+  if (!("cutting-efficiency" in gRNA)) {
+    gRNA["cutting-efficiency"] = "N/A";
+  }
 }
 
 function processResultEntry(entry) {
@@ -63,15 +76,19 @@ const JobResultsTableColumns =
     dataField: 'specificity',
     text: 'specificity',
     sort: true
+  }, {
+    dataField: 'annotations',
+    text: 'annotations',
+    sort: true
   }];
 
 function JobResultsTable(props) {
   let page = null;
 
-  switch (props.jobResults.status) {
+  switch (props.jobresults.status) {
   case JobResultsState.RECEIVED:
-    processJobResults(props.jobResults.data);
-    page = props.jobResults.data.map((queryResult) => (
+    processJobResults(props.jobresults.data);
+    page = props.jobresults.data.map((queryResult) => (
       <React.Fragment key={queryResult[0].name}>
         <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0].name}</h4>
         <BootstrapTable keyField='coordinate' data={queryResult[1]}

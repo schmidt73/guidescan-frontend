@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { HashRouter } from 'react-router-dom';
-import { program } from 'commander';
 
 import * as serviceWorker from './serviceWorker';
 import App from './app';

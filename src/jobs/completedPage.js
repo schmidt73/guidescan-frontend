@@ -5,7 +5,6 @@ import {JobResultsContainer} from 'jobs/results';
 import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';
-import {getJobStatus, submitQuery} from 'jobs/rest';
 
 import axios from 'axios';
 import fileDownload from 'js-file-download';
@@ -13,12 +12,10 @@ import fileDownload from 'js-file-download';
 import React from 'react';
 
 import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
-import Card from 'react-bootstrap/Card';
 
 function downloadResults(id, format) {
   axios.get(process.env.REACT_APP_REST_URL + `/job/result/${format}/${id}`)

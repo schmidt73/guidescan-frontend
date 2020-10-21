@@ -1,5 +1,3 @@
-import * as R from 'ramda';
-
 import {immutableSetState} from 'utils';
 import {JobResultsState} from 'jobs/results';
 
@@ -17,8 +15,8 @@ class GenomeBrowser extends React.Component {
   }
 
   getOptions() {
-    const locus = this.props.jobResults.data[0][0].name;
-    const genome = this.props.jobResults.data[0][0].organism;
+    const locus = this.props.jobresults.data[0][0].name;
+    const genome = this.props.jobresults.data[0][0].organism;
 
     const options = {
       genome: genome || "",
@@ -35,7 +33,7 @@ class GenomeBrowser extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.jobResults.status !== JobResultsState.RECEIVED) {
+    if (this.props.jobresults.status !== JobResultsState.RECEIVED) {
       return;
     }
 
@@ -45,13 +43,13 @@ class GenomeBrowser extends React.Component {
       this.setState({browserLoaded: true});
     }
 
-    if (prevProps.id != this.props.id) {
+    if (prevProps.id !== this.props.id) {
       this.state.browser.removeBrowser();
       igv.createBrowser(this.igvDiv.current, this.getOptions())
         .then((b) => immutableSetState(this, "browser", b));
     }
 
-    if (prevProps.coord != this.props.coord) {
+    if (prevProps.coord !== this.props.coord) {
       this.state.browser.search(this.props.coord);
     }
 

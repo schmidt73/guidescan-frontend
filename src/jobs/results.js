@@ -52,7 +52,7 @@ class JobResultsContainer extends React.Component {
     }
 
     const childrenWithProps = React.Children.map(this.props.children, child => {
-      const props = R.mergeRight(child.props, { jobResults: jobResults });
+      const props = R.mergeRight(child.props, { jobresults: jobResults });
       if (React.isValidElement(child)) {
         return React.cloneElement(child, props);
       }

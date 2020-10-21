@@ -1,12 +1,9 @@
 import {JobCompletedPage} from 'jobs/completedPage';
-import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';
-import {getJobStatus, submitQuery} from 'jobs/rest';
+import {getJobStatus} from 'jobs/rest';
 
 import React from 'react';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 

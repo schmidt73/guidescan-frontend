@@ -1,5 +1,3 @@
-import {immutableSetState} from 'utils.js';
-
 import axios from 'axios';
 
 /*
