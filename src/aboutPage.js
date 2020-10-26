@@ -22,14 +22,26 @@ function AboutPage() {
             What is valid textbox input?
           </p>
           <p style={answer_style}>
-            Coordinates are line delimited and must be of the form: "chrX:start-end".
+            Coordinates are line delimited and must be one of three things. Namely,
+            coordinates can take the form "chrX:start-end", they can be standard
+            gene symbols (case sensitive), or they can be Entrez GeneIDs.
             The chromosome must be appropriate for the organism of interest.
-            For example, one can find gRNAs for three regions as follows:<br/><br/>
+            <br/>
+            <br/>
+        
+            For example, one can find gRNAs for 5 loci as follows:<br/><br/>
             <code style={{textAlign: "center"}}>
               chr4:312000-315000<br/>
               chr4:313000-317000<br/>
-              chr4:315000-319000
+              chr4:315000-319000<br/>
+              VEGFA<br/>
+              7422
             </code>
+
+            <br/>
+            <br/>
+            Notice that VEFGA and 7422 are the same region
+            (see: <a href="https://www.ncbi.nlm.nih.gov/gene/7422" target="_blank">here</a>).
           </p>
           </Col>
         </Row>

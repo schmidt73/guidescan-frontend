@@ -276,8 +276,8 @@ class QueryForm extends React.Component {
             </Col>
           </Row>
           <TextInput
-            display={"Input genomic coordinates as chromosome:start-end or organism \
-                      appropriate gene symbol, one per line:"}
+            display={"Input genomic coordinates as chromosome:start-end, organism \
+                      appropriate gene symbol, or Entrez GeneIDs. Submit one genomic coordinate per line:"}
             onTextChange={this.handleQueryTextChange}
             text={this.state.query_text}/>
           <h2 style={R.merge(italics_style, center_style)}>

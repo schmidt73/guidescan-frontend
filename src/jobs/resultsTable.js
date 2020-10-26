@@ -23,7 +23,7 @@ function processgRNA(chr, gRNA) {
     " | 3:" + (summary[3] || 0);
 
   if (gRNA["annotations"].length > 0) {
-    console.log(gRNA["annotations"]);
+    //console.log(gRNA["annotations"]);
     let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr[1])));
     gRNA["annotations"] = uniqueAnnotations.join("\n");
   } else {
@@ -52,6 +52,22 @@ function processJobResults(results) {
     results.forEach(processResultEntry);
 }
 
+function floatFormatter(precision) {
+  function f(cell, row) {
+    let s = Math.pow(10, precision);
+    let n = Math.trunc(cell * s) / s; 
+    return (
+        <span>{ n.toFixed(precision) }</span>
+    );
+  }
+
+  return f;
+}
+
+function offTargetModal() {
+
+}
+
 const JobResultsTableColumns = 
   [{
     dataField: 'coordinate',
@@ -71,11 +87,13 @@ const JobResultsTableColumns =
   }, {
     dataField: 'cutting-efficiency',
     text: 'cutting-efficiency',
-    sort: true
+    sort: true,
+    formatter: floatFormatter(2),
   }, {
     dataField: 'specificity',
     text: 'specificity',
-    sort: true
+    sort: true,
+    formatter: floatFormatter(2),
   }, {
     dataField: 'annotations',
     text: 'annotations',
@@ -89,8 +107,8 @@ function JobResultsTable(props) {
   case JobResultsState.RECEIVED:
     processJobResults(props.jobresults.data);
     page = props.jobresults.data.map((queryResult) => (
-      <React.Fragment key={queryResult[0].name}>
-        <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0].name}</h4>
+      <React.Fragment key={queryResult[0]["region-name"]}>
+        <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0]["region-name"]}</h4>
         <BootstrapTable keyField='coordinate' data={queryResult[1]}
                         striped={true}
                         columns={JobResultsTableColumns}

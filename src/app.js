@@ -89,8 +89,8 @@ function GuidescanJumbotron() {
             <DoubleHelix width={100} height={100}/>
           </Col>
           <Col className="py-3 pl-4">
-            <h1>GuideScan 2.0</h1>
-            <h4 >A generalized CRISPR guideRNA design tool.</h4>
+            <h1>GuideScan 1.5</h1>
+            <h4>A generalized CRISPR guideRNA design tool.</h4>
           </Col>
         </Row>
       </Jumbotron>

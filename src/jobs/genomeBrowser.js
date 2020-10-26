@@ -15,7 +15,8 @@ class GenomeBrowser extends React.Component {
   }
 
   getOptions() {
-    const locus = this.props.jobresults.data[0][0].name;
+    const coords = this.props.jobresults.data[0][0]["coords"];
+    const locus = coords[0] + ":" + coords[1] + "-" + coords[2];
     const genome = this.props.jobresults.data[0][0].organism;
 
     const options = {
@@ -49,11 +50,10 @@ class GenomeBrowser extends React.Component {
         .then((b) => immutableSetState(this, "browser", b));
     }
 
+      console.log(this.props.jobResults);
     if (prevProps.coord !== this.props.coord) {
       this.state.browser.search(this.props.coord);
     }
-
-
   }
   
   render() {
