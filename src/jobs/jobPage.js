@@ -2,6 +2,7 @@ import {JobCompletedPage} from 'jobs/completedPage';
 
 import {immutableSetState} from 'utils';
 import {getJobStatus} from 'jobs/rest';
+import {useLocation} from 'react-router-dom';
 
 import React from 'react';
 import Container from 'react-bootstrap/Container';
@@ -77,6 +78,7 @@ class JobPage extends React.Component {
   render() {
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});
+    const pathname = "/#/job/" + this.props.id;
 
     let page = null;
     switch (this.state.job_status) {
@@ -86,7 +88,9 @@ class JobPage extends React.Component {
           <h4 style={center_style}>Job Pending</h4>
           <hr/>
           <div className="alert alert-warning">
-            Job is currently pending.
+            Job is currently pending. You can save the
+            link <a href={pathname}>{pathname}</a> and
+            come back later to check on the job.
           </div>
         </>
       );
