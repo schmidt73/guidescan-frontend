@@ -2,6 +2,13 @@ import React from 'react';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from 'react-bootstrap-table-next';
 
+import Modal from 'react-bootstrap/Modal';
+import ModalHeader from 'react-bootstrap/ModalHeader';
+import ModalTitle from 'react-bootstrap/ModalTitle';
+import ModalBody from 'react-bootstrap/ModalBody';
+import ModalFooter from 'react-bootstrap/ModalFooter';
+import Button from 'react-bootstrap/Button';
+
 import {JobResultsState} from 'jobs/results';
 
 function offTargetSummary(off_targets) {
@@ -9,7 +16,7 @@ function offTargetSummary(off_targets) {
   if (!off_targets) return summary;
   off_targets.forEach((off_target) => (off_target.distance in summary)
                       ? summary[off_target.distance]++
-                      : summary[off_target.distance] = 0);
+                      : summary[off_target.distance] = 1);
   return summary;
 }
 
@@ -54,8 +61,8 @@ function processJobResults(results) {
 
 function floatFormatter(precision) {
   function f(cell, row) {
-    let s = Math.pow(10, precision);
-    let n = Math.trunc(cell * s) / s; 
+    const s = Math.pow(10, precision);
+    const n = Math.trunc(cell * s) / s; 
     return (
         <span>{ n.toFixed(precision) }</span>
     );
@@ -64,8 +71,75 @@ function floatFormatter(precision) {
   return f;
 }
 
-function offTargetModal() {
+function offTargetCoordinatesFormatter(cell, row) {
+  let startPosition = null;
+  let endPosition = null;
+  const direction = cell[0].direction === "positive" ? "+" : "-";
+  
+  if (direction === "+") {
+    startPosition = cell[0].position;
+    endPosition   = startPosition + 23;
+  } else {
+    endPosition   = cell[0].position;
+    startPosition = endPosition - 23;
+  }
 
+  return cell[0].chromosome + ":" + startPosition + "-" + endPosition + ":" + direction;
+}
+
+const OffTargetResultsTableColumns =
+      [{
+        dataField: 'coords',
+        text: 'coordinates',
+        sort: true,
+        formatter: offTargetCoordinatesFormatter,
+      }, {
+        dataField: 'distance',
+        text: 'distance',
+        sort: true,
+      }];
+
+function OffTargetModal(props) {
+  const [show, setShow] = React.useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const offTargets = props.gRNA["off-targets"];
+  const offTargetSummary = props.gRNA["off-target-summary"];
+  console.log(offTargets);
+
+  if (!offTargets) {
+    return offTargetSummary;
+  }
+
+  return (
+    <>
+      <a href="#" variant="primary" onClick={(e) => {e.preventDefault(); handleShow();}}>
+        {offTargetSummary}
+      </a>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Off-targets for guideRNA targeting {props.gRNA["coordinate"]}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <BootstrapTable keyField='coordinate' data={offTargets}
+                          striped={true} columns={OffTargetResultsTableColumns}
+                          pagination={paginationFactory()} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+function offTargetFormatter(cell, row) {
+    return <OffTargetModal gRNA={row}/>;
 }
 
 const JobResultsTableColumns = 
@@ -80,10 +154,11 @@ const JobResultsTableColumns =
   }, {
     dataField: 'num-off-targets',
     text: 'num-off-targets',
-    sort: true
+    sort: true,
   }, {
     dataField: 'off-target-summary',
     text: 'off-target-summary',
+    formatter: offTargetFormatter
   }, {
     dataField: 'cutting-efficiency',
     text: 'cutting-efficiency',
