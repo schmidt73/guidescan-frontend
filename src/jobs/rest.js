@@ -28,6 +28,16 @@ function submitQuery(success_callback, error_callback, data) {
     formData.append("query-file-upload", data.fileInput.current.files[0]);
   }
 
+  if (data.specificity_filter.enabled) {
+    formData.append("s-bounds-l", data.specificity_filter.value);
+    formData.append("s-bounds-u", 1);
+  }
+
+  if (data.ce_filter.enabled) {
+    formData.append("ce-bounds-l", data.ce_filter.value);
+    formData.append("ce-bounds-u", 1);
+  }
+
   const source = axios.CancelToken.source();
   console.log(process.env.REACT_APP_REST_URL + '/query');
   console.log(process.env);

@@ -135,6 +135,10 @@ class QueryForm extends React.Component {
     this.handleFilterAnnotatedChange = this.handleFilterAnnotatedChange.bind(this);
     this.handleOrganismSelectionChange = this.handleOrganismSelectionChange.bind(this);
     this.handleEnzymeSelectionChange = this.handleEnzymeSelectionChange.bind(this);
+    this.handleSpecificityFilterCheckedChange = this.handleSpecificityFilterCheckedChange.bind(this);
+    this.handleSpecificityFilterValueChange = this.handleSpecificityFilterValueChange.bind(this);
+    this.handleCEFilterCheckedChange = this.handleCEFilterCheckedChange.bind(this);
+    this.handleCEFilterValueChange = this.handleCEFilterValueChange.bind(this);
 
     this.onLoadInfoSuccess = this.onLoadInfoSuccess.bind(this);
     this.onLoadInfoFailure = this.onLoadInfoFailure.bind(this);
@@ -153,6 +157,14 @@ class QueryForm extends React.Component {
       organism: this.available_organisms[0],
       enzyme: this.available_enzymes[0],
       query_text: "chrIV:1100-45000",
+      specificity_filter: {
+        enabled: false,
+        value: 0,
+      },
+      ce_filter: {
+        enabled: false,
+        value: 0,
+      },
       flanking: {
         enabled: false,
         value: 1000
@@ -221,6 +233,30 @@ class QueryForm extends React.Component {
     this.setState({top_n: top_n});
   }
 
+  handleSpecificityFilterCheckedChange(t) {
+    const s_filter = R.assoc("enabled",
+                             !this.state.specificity_filter.enabled,
+                             this.state.specificity_filter);
+    this.setState({specificity_filter: s_filter});
+  }
+
+  handleSpecificityFilterValueChange(t) {
+    const s_filter = R.assoc("value", t, this.state.specificity_filter);
+    this.setState({specificity_filter: s_filter});
+  }
+
+  handleCEFilterCheckedChange(t) {
+    const ce_filter = R.assoc("enabled",
+                              !this.state.ce_filter.enabled,
+                              this.state.ce_filter);
+    this.setState({ce_filter: ce_filter});
+  }
+
+  handleCEFilterValueChange(t) {
+    const ce_filter = R.assoc("value", t, this.state.ce_filter);
+    this.setState({ce_filter: ce_filter});
+  }
+
   onFormSubmit() {
     this.props.handleSubmit(this.state);
   }
@@ -251,8 +287,16 @@ class QueryForm extends React.Component {
                 checked={this.state.flanking.enabled}
                 value={this.state.flanking.value}
                 display="Flanking:"/>
+              <ToggledNumericInput
+                style={margin_style("0 0em 0.85em 0")}
+                onCheckedChange={this.handleCEFilterCheckedChange}
+                onValueChange={this.handleCEFilterValueChange}
+                name="flanking-input"
+                checked={this.state.ce_filter.enabled}
+                value={this.state.ce_filter.value}
+                display="Filter above cutting efficiency:"/>
               <CheckboxInput
-                style={margin_style("0 0 1.5em 0")}
+                style={margin_style("0 0 0 0")}
                 onCheckedChange={this.handleFilterAnnotatedChange}
                 name="filter-annotated"
                 checked={this.state.filter_annotated_grnas}
@@ -266,15 +310,23 @@ class QueryForm extends React.Component {
                 display="Enzyme:"
                 items={this.state.available_enzymes} />
               <ToggledNumericInput
-                style={margin_style("0 1em 1em 0")}
+                style={margin_style("0 1em 0.75em 0")}
                 onCheckedChange={this.handleTopNCheckedChange}
                 onValueChange={this.handleTopNValueChange}
                 name="topn-input"
                 checked={this.state.top_n.enabled}
                 value={this.state.top_n.value}
                 display="Top N Queries:" />
+              <ToggledNumericInput
+                onCheckedChange={this.handleSpecificityFilterCheckedChange}
+                onValueChange={this.handleSpecificityFilterValueChange}
+                name="flanking-input"
+                checked={this.state.specificity_filter.enabled}
+                value={this.state.specificity_filter.value}
+                display="Filter above specificity:"/>
             </Col>
           </Row>
+          <hr style={margin_style("1.75em 0 1.75em 0")}/>
           <TextInput
             display={"Input genomic coordinates as chromosome:start-end, organism \
                       appropriate gene symbol, or Entrez GeneIDs. Submit one genomic coordinate per line:"}
