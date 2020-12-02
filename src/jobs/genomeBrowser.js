@@ -1,5 +1,4 @@
 import {immutableSetState} from 'utils';
-import {JobResultsState} from 'jobs/results';
 
 import React from 'react';
 import igv from 'igv';

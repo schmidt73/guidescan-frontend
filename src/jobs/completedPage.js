@@ -1,7 +1,6 @@
 import * as R from 'ramda';
 
 import {JobResultsTable} from 'jobs/resultsTable';
-import {JobResultsContainer} from 'jobs/results';
 import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';

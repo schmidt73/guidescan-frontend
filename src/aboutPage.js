@@ -42,6 +42,23 @@ function AboutPage() {
             <br/>
             Notice that VEFGA and 7422 are the same region
             (see: <a href="https://www.ncbi.nlm.nih.gov/gene/7422" target="_blank">here</a>).
+            <br/><br/>
+            <b>Alternatively,</b> one can submit a DNA-sequence. This will first find the
+            location of the sequence within the genome of interest and then find all gRNAs
+            within that sequence. Exact matches are required, so if a different reference is
+            used, it is not guarenteed that matches are found.
+            <br/><br/>
+            For example, an input might look like this:<br/><br/>
+            <code style={{textAlign: "center"}}>
+              ATCAGCGATCGACTAGCGCGCGCGCTAAAAAAAAAAA<br/>
+              CACATCTCTCTTAGGGGGAANACTAGGGGGGGGGGAA<br/>
+              ACACACAGCCCCCCCCCCCCCCACAGGTTTTAACGAG<br/>
+              ACATAGGGGGATACAGCGACGGGGGGGGGAGCGACAT<br/>
+            </code>
+
+            <br/>
+            Line breaks <b>are</b> allowed within the input, but only one DNA-sequence can be
+            submitted at a time due to the computational resources required for alignment.
           </p>
           </Col>
         </Row>
