@@ -31,8 +31,21 @@ class JobCompletedPage extends React.Component {
     super(props);
 
     this.state = {
-      showResults: false
+      showResults: false,
+      organism: null,
+      coords: null,
     };
+
+    this.handleCoordsChange = this.handleCoordsChange.bind(this);
+    this.handleOrganismChange = this.handleOrganismChange.bind(this);
+  }
+
+  handleCoordsChange(c) {
+    immutableSetState(this, {coords: c});
+  }
+
+  handleOrganismChange(o) {
+    immutableSetState(this, {organism: o});
   }
 
   render() {
@@ -63,11 +76,15 @@ class JobCompletedPage extends React.Component {
     );
 
     const results = !this.state.showResults ? null : (
-      <JobResultsContainer id={this.props.id}>
-        <GenomeBrowser id={this.props.id}/>
+      <>
+        <GenomeBrowser id={this.props.id}
+                       organism={this.state.organism}
+                       coords={this.state.coords}/>
         <hr/> 
-        <JobResultsTable/>
-      </JobResultsContainer>
+        <JobResultsTable id={this.props.id}
+                         onCoordsChange={this.handleCoordsChange}
+                         onOrganismChange={this.handleOrganismChange}/>
+      </>
     );
 
     return (

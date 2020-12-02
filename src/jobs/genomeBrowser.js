@@ -9,19 +9,19 @@ class GenomeBrowser extends React.Component {
     super(props);
 
     this.igvDiv = React.createRef();
-    this.state = {browserLoaded: false};
 
+    this.state = {browserSettings:
+                  {organism: null, coords: null, id: null},
+                  browser: null};
     this.getOptions = this.getOptions.bind(this);
   }
 
   getOptions() {
-    const coords = this.props.jobresults.data[0][0]["coords"];
-    const locus = coords[0] + ":" + coords[1] + "-" + coords[2];
-    const genome = this.props.jobresults.data[0][0].organism;
+    const genome = this.props.organism;
 
     const options = {
       genome: genome || "",
-      locus: locus || "",
+      locus: this.props.coords,
       tracks: [
         {
           "url": process.env.REACT_APP_REST_URL + "/job/result/bed/" + this.props.id,
@@ -33,26 +33,33 @@ class GenomeBrowser extends React.Component {
     return options;
   }
 
+  // TODO: Fix this code because it has several race conditions.
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.props.jobresults.status !== JobResultsState.RECEIVED) {
-      return;
-    }
-
-    if (!this.state.browserLoaded) {
+    if ((this.props.organism !== this.state.browserSettings.organism ||
+         this.props.id !== this.state.browserSettings.id) &&
+        (!!this.props.id && !!this.props.organism && !!this.props.coords)) {
+      if (this.state.browser) {
+        igv.removeBrowser(this.state.browser);
+      }
       igv.createBrowser(this.igvDiv.current, this.getOptions())
-        .then((b) => immutableSetState(this, "browser", b));
-      this.setState({browserLoaded: true});
+        .then((b) => {
+          this.setState({browser: b,
+                         browserSettings: {
+                           organism: this.props.organism,
+                           id: this.props.id,
+                           coords: this.props.coords,
+                         }});
+        });
     }
 
-    if (prevProps.id !== this.props.id) {
-      this.state.browser.removeBrowser();
-      igv.createBrowser(this.igvDiv.current, this.getOptions())
-        .then((b) => immutableSetState(this, "browser", b));
-    }
-
-      console.log(this.props.jobResults);
-    if (prevProps.coord !== this.props.coord) {
-      this.state.browser.search(this.props.coord);
+    if (this.props.coords !== this.state.browserSettings.coords
+       && !!this.state.browser) {
+      this.state.browser.search(this.props.coords);
+      this.setState({browserSettings: {
+        organism: this.state.browserSettings.organism,
+        id: this.state.browserSettings.id,
+        coords: this.props.coords
+      }});
     }
   }
   

@@ -1,3 +1,4 @@
+import * as R from 'ramda';
 import React from 'react';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from 'react-bootstrap-table-next';
@@ -9,7 +10,8 @@ import ModalBody from 'react-bootstrap/ModalBody';
 import ModalFooter from 'react-bootstrap/ModalFooter';
 import Button from 'react-bootstrap/Button';
 
-import {JobResultsState} from 'jobs/results';
+import {immutableSetState} from 'utils';
+import {getJobResults} from 'jobs/rest';
 
 function offTargetSummary(off_targets) {
   let summary = {};
@@ -20,9 +22,11 @@ function offTargetSummary(off_targets) {
   return summary;
 }
 
-function processgRNA(chr, gRNA) {
+function processgRNA(onCoordsChange, chr, gRNA) {
   const strand = (gRNA.direction === "positive") ? "+" : "-";
-  gRNA.coordinate = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
+  const coords = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
+  gRNA.coordinate = <a className="breadcrumb-item" onClick={() => onCoordsChange(coords)}>{coords}</a>;
+
   const offTargets = gRNA["off-targets"];
   const summary = offTargetSummary(offTargets);
   gRNA["num-off-targets"] = offTargets ? offTargets.length : 0;
@@ -30,7 +34,6 @@ function processgRNA(chr, gRNA) {
     " | 3:" + (summary[3] || 0);
 
   if (gRNA["annotations"].length > 0) {
-    //console.log(gRNA["annotations"]);
     let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr[1])));
     gRNA["annotations"] = uniqueAnnotations.join("\n");
   } else {
@@ -44,19 +47,20 @@ function processgRNA(chr, gRNA) {
   if (!("cutting-efficiency" in gRNA)) {
     gRNA["cutting-efficiency"] = "N/A";
   }
+
 }
 
-function processResultEntry(entry) {
+function processResultEntry(onCoordsChange, entry) {
   const chr = entry[0].coords[0]; 
-  entry[1].forEach((gRNA) => processgRNA(chr, gRNA));
+  entry[1].forEach((gRNA) => processgRNA(onCoordsChange, chr, gRNA));
 }
 
 /*
   Processes the results of a /job/result/ request into a format
   suitable for a results table. Mutates the input.
 */
-function processJobResults(results) {
-    results.forEach(processResultEntry);
+function processJobResults(onCoordsChange, results) {
+  results.forEach((e) => processResultEntry(onCoordsChange, e));
 }
 
 function floatFormatter(precision) {
@@ -107,7 +111,6 @@ function OffTargetModal(props) {
 
   const offTargets = props.gRNA["off-targets"];
   const offTargetSummary = props.gRNA["off-target-summary"];
-  console.log(offTargets);
 
   if (!offTargets) {
     return offTargetSummary;
@@ -175,38 +178,93 @@ const JobResultsTableColumns =
     sort: true
   }];
 
-function JobResultsTable(props) {
-  let page = null;
+const JobResultsState = {
+  PENDING:  1,
+  ERROR:    2,
+  RECEIVED: 3,
+};
 
-  switch (props.jobresults.status) {
-  case JobResultsState.RECEIVED:
-    processJobResults(props.jobresults.data);
-    page = props.jobresults.data.map((queryResult) => (
-      <React.Fragment key={queryResult[0]["region-name"]}>
-        <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>{queryResult[0]["region-name"]}</h4>
-        <BootstrapTable keyField='coordinate' data={queryResult[1]}
-                        striped={true}
-                        columns={JobResultsTableColumns}
-                        pagination={paginationFactory()} />
-      </React.Fragment>
-    ));
-    break;
-  case JobResultsState.ERROR:
-    page = (
-      <div className="alert alert-danger">
-        Error loading results.
-      </div>
-    );
-    break;
-  default:
-    page = (
-      <div className="alert alert-warning">
-        {"Job Results are currently pending..."}
-      </div>
-    );
+class JobResultsTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onLoadSuccess = this.onLoadSuccess.bind(this);
+    this.onLoadFailure = this.onLoadFailure.bind(this);
+
+    this.loadJobResults = (id) =>
+      getJobResults(this.onLoadSuccess,
+                    this.onLoadFailure,
+                    'json', id);
+
+    this.state = {
+      status: JobResultsState.PENDING
+    };
   }
 
-  return page;
+  componentDidMount() {
+    this.loadSource = this.loadJobResults(this.props.id);
+  }
+
+  componentWillUnmount() {
+    this.loadSource.cancel();
+  }
+
+  onLoadSuccess(response) {
+    immutableSetState(this, {status: JobResultsState.RECEIVED,
+                             data: response.data});
+    this.props.onOrganismChange(this.state.data[0][0].organism);
+    const defaultCoords = this.state.data[0][0].coords;
+    const defaultCoordsString = defaultCoords[0] + ":" + defaultCoords[1] + "-" + defaultCoords[2];
+    this.props.onCoordsChange(defaultCoordsString);
+  }
+
+  onLoadFailure(error) {
+    immutableSetState(this, {status: JobResultsState.ERROR});
+  }
+
+  render() {
+    let page = null;
+
+    switch (this.state.status) {
+    case JobResultsState.RECEIVED:
+      let gRNAs = R.clone(this.state.data);
+      processJobResults(this.props.onCoordsChange, gRNAs);
+      page = gRNAs.map((queryResult) => {
+        const grnaCoords = queryResult[0]["coords"];
+        const grnaCoordsString = grnaCoords[0] + ":" + grnaCoords[1] + "-" + grnaCoords[2];
+        return (
+          <React.Fragment key={queryResult[0]["region-name"]}>
+            <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}
+                onClick={() => this.props.onCoordsChange(grnaCoordsString)}>
+              <a className="breadcrumb-item" style={{color: "black"}}>
+                {queryResult[0]["region-name"]}
+              </a>
+            </h4>
+            <BootstrapTable keyField='sequence' data={queryResult[1]}
+                            striped={true}
+                            columns={JobResultsTableColumns}
+                            pagination={paginationFactory()} />
+          </React.Fragment>
+        );
+      });
+      break;
+    case JobResultsState.ERROR:
+      page = (
+        <div className="alert alert-danger">
+          Error loading results.
+        </div>
+      );
+      break;
+    default:
+      page = (
+        <div className="alert alert-warning">
+          {"Job Results are currently pending..."}
+        </div>
+      );
+    }
+
+    return page;
+  }
 }
 
 export {JobResultsTable};
