@@ -75,8 +75,11 @@ function NavigationBar() {
 
 function DoubleHelix(props) {
   return (
-    <img src="/img/helix.png" width={props.width} height={props.height}
-         alt="double helix"/>
+    <a href="/">
+      <img src="/img/helix.png"
+           width={props.width} height={props.height}
+           alt="double helix"/>
+    </a>
   );
 }
 
