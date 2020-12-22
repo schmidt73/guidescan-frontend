@@ -9,7 +9,9 @@ class GenomeBrowser extends React.Component {
 
     this.igvDiv = React.createRef();
 
-    this.state = {browserSettings:
+    this.state = {
+      creatingBrowser: false,
+      browserSettings:
                   {organism: null, coords: null, id: null},
                   browser: null};
     this.getOptions = this.getOptions.bind(this);
@@ -34,20 +36,26 @@ class GenomeBrowser extends React.Component {
 
   // TODO: Fix this code because it has several race conditions.
   componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.creatingBrowser) return;
+
     if ((this.props.organism !== this.state.browserSettings.organism ||
          this.props.id !== this.state.browserSettings.id) &&
         (!!this.props.id && !!this.props.organism && !!this.props.coords)) {
       if (this.state.browser) {
         igv.removeBrowser(this.state.browser);
       }
+
+      this.setState({creatingBrowser: true});
       igv.createBrowser(this.igvDiv.current, this.getOptions())
         .then((b) => {
-          this.setState({browser: b,
-                         browserSettings: {
-                           organism: this.props.organism,
-                           id: this.props.id,
-                           coords: this.props.coords,
-                         }});
+          this.setState({
+            creatingBrowser: false,
+            browser: b,
+            browserSettings: {
+              organism: this.props.organism,
+              id: this.props.id,
+              coords: this.props.coords,
+            }});
         });
     }
 
