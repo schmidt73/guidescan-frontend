@@ -67,9 +67,12 @@ class ToggledNumericInput extends React.Component {
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleCheckedChange}/>
-        <Form.Control
+        <input
           style={{marginLeft: "0.5em"}}
           type="number"
+          step="0.1"
+          min="0"
+          max="1"
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
