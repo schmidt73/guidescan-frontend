@@ -51,6 +51,18 @@ function submitQuery(success_callback, error_callback, data) {
   return source;
 }
 
+function getCompletions(success_callback, error_callback, organism, symbol) {
+  const source = axios.CancelToken.source();
+  axios.get(process.env.REACT_APP_REST_URL + '/info/autocomplete', {
+    params: {
+      organism: organism,
+      symbol: symbol
+    },
+    cancelToken: source.token
+  }).then(success_callback)
+    .catch(error_callback);
+}
+
 function getJobStatus(success_callback, error_callback, job_id) {
   const source = axios.CancelToken.source();
   axios.get(process.env.REACT_APP_REST_URL + '/job/status/' + job_id, {

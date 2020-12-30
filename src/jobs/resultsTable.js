@@ -227,7 +227,7 @@ class JobResultsTable extends React.Component {
 
     switch (this.state.status) {
     case JobResultsState.RECEIVED:
-      let gRNAs = R.clone(this.state.data);
+      let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
       processJobResults(this.props.onCoordsChange, gRNAs);
       page = gRNAs.map((queryResult) => {
         const grnaCoords = queryResult[0]["coords"];
