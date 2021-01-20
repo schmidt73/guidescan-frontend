@@ -360,4 +360,5 @@ class QueryForm extends React.Component {
   }
 }
 
-export default QueryForm;
+export {QueryForm, ItemSelectorInput, TextInput};
+

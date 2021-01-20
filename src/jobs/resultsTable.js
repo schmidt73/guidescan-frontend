@@ -22,6 +22,27 @@ function offTargetSummary(off_targets) {
   return summary;
 }
 
+
+function grnaQueryProcessGrna(chr, gRNA) {
+  const strand = (gRNA.direction === "positive") ? "+" : "-";
+  const coords = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
+  gRNA.coordinate = coords;
+
+  const offTargets = gRNA["off-targets"];
+  const summary = offTargetSummary(offTargets);
+  gRNA["num-off-targets"] = offTargets ? offTargets.length : 0;
+  gRNA["off-target-summary"] = "2:" + (summary[2] || 0) +
+    " | 3:" + (summary[3] || 0);
+
+  if (!("specificity" in gRNA)) {
+    gRNA["specificity"] = "N/A";
+  }
+
+  if (!("cutting-efficiency" in gRNA)) {
+    gRNA["cutting-efficiency"] = "N/A";
+  }
+}
+
 function processgRNA(onCoordsChange, chr, gRNA) {
   const strand = (gRNA.direction === "positive") ? "+" : "-";
   const coords = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
@@ -178,6 +199,45 @@ const JobResultsTableColumns =
     sort: true
   }];
 
+const GrnaJobResultsTableColumns = 
+  [{
+    dataField: 'coordinate',
+    text: 'coordinate',
+    sort: true
+  }, {
+    dataField: 'sequence',
+    text: 'gRNA',
+    sort: true
+  }, {
+    dataField: 'num-off-targets',
+    text: 'num-off-targets',
+    sort: true,
+  }, {
+    dataField: 'off-target-summary',
+    text: 'off-target-summary',
+    formatter: offTargetFormatter
+  }, {
+    dataField: 'cutting-efficiency',
+    text: 'cutting-efficiency',
+    sort: true,
+    formatter: floatFormatter(2),
+  }, {
+    dataField: 'specificity',
+    text: 'specificity',
+    sort: true,
+    formatter: floatFormatter(2),
+  }];
+
+const BadGrnaJobResultsTableColumns = 
+  [{
+    dataField: 'sequence',
+    text: 'sequence',
+    sort: true
+  }, {
+    dataField: 'error',
+    text: 'error',
+  }];
+
 const JobResultsState = {
   PENDING:  1,
   ERROR:    2,
@@ -267,4 +327,101 @@ class JobResultsTable extends React.Component {
   }
 }
 
-export {JobResultsTable};
+class GrnaJobResultsTable extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.onLoadSuccess = this.onLoadSuccess.bind(this);
+    this.onLoadFailure = this.onLoadFailure.bind(this);
+
+    this.loadJobResults = (id) =>
+      getJobResults(this.onLoadSuccess,
+                    this.onLoadFailure,
+                    'json', id);
+
+    this.state = {
+      status: JobResultsState.PENDING
+    };
+  }
+
+  componentDidMount() {
+    this.loadSource = this.loadJobResults(this.props.id);
+  }
+
+  componentWillUnmount() {
+    this.loadSource.cancel();
+  }
+
+  onLoadSuccess(response) {
+    immutableSetState(this, {status: JobResultsState.RECEIVED,
+                             data: response.data});
+  }
+
+  onLoadFailure(error) {
+    immutableSetState(this, {status: JobResultsState.ERROR});
+  }
+
+  render() {
+    let page = null;
+
+    switch (this.state.status) {
+    case JobResultsState.RECEIVED:
+      let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
+      let goodGrnas = [], badGrnas = [];
+      for(const gRNA of gRNAs) {
+        if (gRNA.error) {
+          gRNA.error = gRNA.error.message;
+          gRNA.sequence = gRNA.grna;
+          badGrnas.push(gRNA);
+        } else { 
+          grnaQueryProcessGrna(gRNA.chr, gRNA);
+          goodGrnas.push(gRNA);
+        }
+      }
+
+      page = (
+        <>
+          <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>
+            <a className="breadcrumb-item" style={{color: "black"}}>
+              Evaluated gRNAs
+            </a>
+          </h4>
+          <BootstrapTable keyField='sequence' data={goodGrnas}
+                          striped={true}
+                          columns={GrnaJobResultsTableColumns}/>
+          {((badGrnas.length > 0) ? (
+            <>
+              <h4 style={{margin: "1.5em 0 1em 0.5em", fontStyle: "italic"}}>
+                <a className="breadcrumb-item" style={{color: "black"}}>
+                  Failed gRNAs
+                </a>
+              </h4>
+              <BootstrapTable keyField='sequence' data={badGrnas}
+                              striped={true}
+                              columns={BadGrnaJobResultsTableColumns}/>
+            </>
+          ) : null)}
+        </>
+      );
+
+      break;
+    case JobResultsState.ERROR:
+      page = (
+        <div className="alert alert-danger">
+          Error loading results.
+        </div>
+      );
+      break;
+    default:
+      page = (
+        <div className="alert alert-warning">
+          {"Job Results are currently pending..."}
+        </div>
+      );
+    }
+
+    return page;
+  }
+}
+
+export {JobResultsTable, GrnaJobResultsTable};

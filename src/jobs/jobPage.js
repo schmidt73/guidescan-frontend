@@ -61,11 +61,12 @@ class JobPage extends React.Component {
 
   onJobStatusSuccess(response) {
     const status = response.data["job-status"];
+    const jobType = response.data["result-type"];
 
     if (status === "pending") {
       immutableSetState(this, {job_status: JobStatus.PENDING});
     } else if (status === "completed") {
-      immutableSetState(this, {job_status: JobStatus.COMPLETED});
+      immutableSetState(this, {job_status: JobStatus.COMPLETED, jobType: jobType});
     } else if (status === "failed") {
       const failure_msg = response.data["failure"];
       immutableSetState(this, {job_status: JobStatus.FAILED,
@@ -124,7 +125,7 @@ class JobPage extends React.Component {
       break;
     case JobStatus.COMPLETED:
       page = (
-        <JobCompletedPage id={this.props.id}/>
+        <JobCompletedPage id={this.props.id} jobType={this.state.jobType}/>
       );
       break;
     default:

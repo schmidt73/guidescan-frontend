@@ -51,6 +51,26 @@ function submitQuery(success_callback, error_callback, data) {
   return source;
 }
 
+function submitGrnaQuery(success_callback, error_callback, data) {
+  let formData = new FormData();
+
+  formData.append("organism", data.organism);
+  formData.append("enzyme", data.enzyme);
+  formData.append("query-text", data.query_text);
+  formData.append("query-type", "grna");
+
+  const source = axios.CancelToken.source();
+  axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
+    cancelToken: source.token,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then(success_callback)
+    .catch(error_callback);
+  return source;
+}
+
+
 function getCompletions(success_callback, error_callback, organism, symbol) {
   const source = axios.CancelToken.source();
   axios.get(process.env.REACT_APP_REST_URL + '/info/autocomplete', {
@@ -90,4 +110,4 @@ function getInfoSupported(success_callback, error_callback) {
   return source;
 }
 
-export {getJobResults, getJobStatus, getInfoSupported, submitQuery};
+export {getJobResults, getJobStatus, getInfoSupported, submitQuery, submitGrnaQuery};

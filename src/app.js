@@ -9,10 +9,11 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import './app.scss';
-import QueryForm from './queryForm.js';
+import {QueryForm} from './queryForm.js';
+import {GrnaQueryForm} from './grnaQueryForm.js';
 import {AboutPage} from 'aboutPage';
 import {ContactPage} from 'contactPage';
-import {submitQuery} from 'jobs/rest';
+import {submitQuery, submitGrnaQuery} from 'jobs/rest';
 import {JobPage} from 'jobs/jobPage';
 
 import {
@@ -67,6 +68,7 @@ function NavigationBar() {
   return (
     <Breadcrumb>
       <ActiveBreadcrumbItem path="/" exact={true} label="Home" />
+      <ActiveBreadcrumbItem path="/grna" label="gRNA Search" />
       <ActiveBreadcrumbItem path="/about" label="About" />
       <ActiveBreadcrumbItem path="/contact" label="Contact" />
     </Breadcrumb>
@@ -170,6 +172,11 @@ class App extends React.Component {
                       this.handleFailedQuery,
                       queryState);
 
+    const grnaSubmitCallback = (queryState) =>
+          submitGrnaQuery(this.handleSuccessfulQuery,
+                          this.handleFailedQuery,
+                          queryState);
+
     let successToast = (
       <QuitableToast
         show={this.state.query.state === QueryState.SUCCESS}
@@ -196,6 +203,10 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/">
             <QueryForm handleSubmit={submitCallback}/>
+            <CitationBox/>
+          </Route>
+          <Route exact path="/grna">
+            <GrnaQueryForm handleSubmit={grnaSubmitCallback}/>
             <CitationBox/>
           </Route>
           <Route exact path="/about">

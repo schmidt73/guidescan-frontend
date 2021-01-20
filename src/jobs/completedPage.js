@@ -1,6 +1,6 @@
 import * as R from 'ramda';
 
-import {JobResultsTable} from 'jobs/resultsTable';
+import {JobResultsTable, GrnaJobResultsTable} from 'jobs/resultsTable';
 import {GenomeBrowser} from 'jobs/genomeBrowser';
 
 import {immutableSetState} from 'utils';
@@ -74,18 +74,28 @@ class JobCompletedPage extends React.Component {
       </DropdownButton>
     );
 
-    const results = !this.state.showResults ? null : (
-      <>
-        <GenomeBrowser id={this.props.id}
-                       organism={this.state.organism}
-                       coords={this.state.coords}/>
-        <hr/> 
-        <JobResultsTable id={this.props.id}
-                         onCoordsChange={this.handleCoordsChange}
-                         onOrganismChange={this.handleOrganismChange}/>
-      </>
-    );
+    let results =  null;
 
+    if (!this.state.showResults) {
+      if (this.props.jobType === "grna") {
+        results = (
+          <GrnaJobResultsTable id={this.props.id}/>
+        );
+      } else {
+        results = (
+          <>
+            <GenomeBrowser id={this.props.id}
+                           organism={this.state.organism}
+                           coords={this.state.coords}/>
+            <hr/> 
+            <JobResultsTable id={this.props.id}
+                             onCoordsChange={this.handleCoordsChange}
+                             onOrganismChange={this.handleOrganismChange}/>
+          </>
+        );
+      }
+    }
+    
     return (
       <Container>
         <h2 style={center_style}>Job Results</h2>
