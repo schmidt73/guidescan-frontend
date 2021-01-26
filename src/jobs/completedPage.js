@@ -81,6 +81,8 @@ class JobCompletedPage extends React.Component {
         results = (
           <GrnaJobResultsTable id={this.props.id}/>
         );
+      } else if (this.props.jobType === "library") {
+        results = null;
       } else {
         results = (
           <>
@@ -100,11 +102,14 @@ class JobCompletedPage extends React.Component {
       <Container>
         <h2 style={center_style}>Job Results</h2>
         <Row className="justify-content-md-center">
-          {showResultsButton}
+          {(this.props.jobType === "library") ? null : showResultsButton}
           {downloadResultsButton}
         </Row>
-        <hr/>
-        {results}
+        {(results ? (
+          <>
+            <hr/>
+            {results}
+          </>) : null)}
       </Container>
     );
   }

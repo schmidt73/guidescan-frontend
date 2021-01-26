@@ -39,8 +39,6 @@ function submitQuery(success_callback, error_callback, data) {
   }
 
   const source = axios.CancelToken.source();
-  console.log(process.env.REACT_APP_REST_URL + '/query');
-  console.log(process.env);
   axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
     cancelToken: source.token,
     headers: {
@@ -58,6 +56,42 @@ function submitGrnaQuery(success_callback, error_callback, data) {
   formData.append("enzyme", data.enzyme);
   formData.append("query-text", data.query_text);
   formData.append("query-type", "grna");
+
+  const source = axios.CancelToken.source();
+  axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
+    cancelToken: source.token,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then(success_callback)
+    .catch(error_callback);
+  return source;
+}
+
+function submitLibraryQuery(success_callback, error_callback, data) {
+  let formData = new FormData();
+
+  formData.append("organism", data.organism);
+  formData.append("query-text", data.query_text);
+  formData.append("query-type", "library");
+
+  if (data.num_pools.enabled) {
+    formData.append("num-pools", data.num_pools.value);
+  }
+
+  if (data.saturation.enabled) {
+    formData.append("saturation", data.saturation.value);
+  }
+
+  if (data.num_control.enabled) {
+    formData.append("num-control", data.num_control.value);
+  }
+
+  if (data.num_essential.enabled) {
+    formData.append("num-essential", data.num_essential.value);
+  }
+
+  formData.append("prime5-g", data.prime5_g);
 
   const source = axios.CancelToken.source();
   axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
@@ -110,4 +144,5 @@ function getInfoSupported(success_callback, error_callback) {
   return source;
 }
 
-export {getJobResults, getJobStatus, getInfoSupported, submitQuery, submitGrnaQuery};
+export {getJobResults, getJobStatus, getInfoSupported,
+        submitQuery, submitGrnaQuery, submitLibraryQuery};

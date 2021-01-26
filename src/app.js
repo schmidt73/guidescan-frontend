@@ -11,9 +11,10 @@ import Col from 'react-bootstrap/Col';
 import './app.scss';
 import {QueryForm} from './queryForm.js';
 import {GrnaQueryForm} from './grnaQueryForm.js';
+import {LibraryQueryForm} from './libraryQueryForm.js';
 import {AboutPage} from 'aboutPage';
 import {ContactPage} from 'contactPage';
-import {submitQuery, submitGrnaQuery} from 'jobs/rest';
+import {submitQuery, submitGrnaQuery, submitLibraryQuery} from 'jobs/rest';
 import {JobPage} from 'jobs/jobPage';
 
 import {
@@ -68,6 +69,7 @@ function NavigationBar() {
   return (
     <Breadcrumb>
       <ActiveBreadcrumbItem path="/" exact={true} label="Home" />
+      <ActiveBreadcrumbItem path="/library" exact={true} label="Library Design" />
       <ActiveBreadcrumbItem path="/grna" label="gRNA Search" />
       <ActiveBreadcrumbItem path="/about" label="About" />
       <ActiveBreadcrumbItem path="/contact" label="Contact" />
@@ -177,6 +179,11 @@ class App extends React.Component {
                           this.handleFailedQuery,
                           queryState);
 
+    const librarySubmitCallback = (queryState) =>
+          submitLibraryQuery(this.handleSuccessfulQuery,
+                             this.handleFailedQuery,
+                             queryState);
+
     let successToast = (
       <QuitableToast
         show={this.state.query.state === QueryState.SUCCESS}
@@ -203,6 +210,10 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/">
             <QueryForm handleSubmit={submitCallback}/>
+            <CitationBox/>
+          </Route>
+          <Route exact path="/library">
+            <LibraryQueryForm handleSubmit={librarySubmitCallback}/>
             <CitationBox/>
           </Route>
           <Route exact path="/grna">

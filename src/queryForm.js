@@ -43,7 +43,43 @@ class ItemSelectorInput extends React.Component {
   }
 }
 
-class ToggledNumericInput extends React.Component {
+class ToggledIntegerInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.handleCheckedChange = this.handleCheckedChange.bind(this);
+    this.handleValueChange = this.handleValueChange.bind(this);
+  }
+
+  handleValueChange(e) {
+    this.props.onValueChange(e.target.value);
+  }
+
+  handleCheckedChange(e) {
+    this.props.onCheckedChange(e.target.value);
+  }
+
+  render() {
+    return (
+      <Form style={this.props.style} inline>
+        <Form.Check
+          type={"checkbox"}
+          id={"toggledNumericInputCheckbox-" + this.props.name}
+          checked={this.props.checked}
+          label={this.props.display}
+          onChange={this.handleCheckedChange}/>
+        <input
+          style={{marginLeft: "0.5em"}}
+          type="number"
+          step="1"
+          value={this.props.value}
+          disabled={!this.props.checked}
+          onChange={this.handleValueChange}/>
+      </Form>
+    );
+  }
+}
+
+class ToggledDecimalInput extends React.Component {
   constructor(props) {
     super(props);
     this.handleCheckedChange = this.handleCheckedChange.bind(this);
@@ -282,7 +318,7 @@ class QueryForm extends React.Component {
                 name="organism-selector"
                 display="Organism:"
                 items={this.state.available_organisms}/>
-              <ToggledNumericInput
+              <ToggledIntegerInput
                 style={margin_style("0 0em 0.75em 0")}
                 onCheckedChange={this.handleFlankingCheckedChange}
                 onValueChange={this.handleFlankingValueChange}
@@ -290,11 +326,11 @@ class QueryForm extends React.Component {
                 checked={this.state.flanking.enabled}
                 value={this.state.flanking.value}
                 display="Flanking:"/>
-              <ToggledNumericInput
+              <ToggledDecimalInput
                 style={margin_style("0 0em 0.85em 0")}
                 onCheckedChange={this.handleCEFilterCheckedChange}
                 onValueChange={this.handleCEFilterValueChange}
-                name="flanking-input"
+                name="cutting-efficiency-input"
                 checked={this.state.ce_filter.enabled}
                 value={this.state.ce_filter.value}
                 display="Filter above cutting efficiency:"/>
@@ -312,7 +348,7 @@ class QueryForm extends React.Component {
                 name="enzyme-selector"
                 display="Enzyme:"
                 items={this.state.available_enzymes} />
-              <ToggledNumericInput
+              <ToggledIntegerInput
                 style={margin_style("0 1em 0.75em 0")}
                 onCheckedChange={this.handleTopNCheckedChange}
                 onValueChange={this.handleTopNValueChange}
@@ -320,10 +356,10 @@ class QueryForm extends React.Component {
                 checked={this.state.top_n.enabled}
                 value={this.state.top_n.value}
                 display="Top N Queries:" />
-              <ToggledNumericInput
+              <ToggledDecimalInput
                 onCheckedChange={this.handleSpecificityFilterCheckedChange}
                 onValueChange={this.handleSpecificityFilterValueChange}
-                name="flanking-input"
+                name="specificty-input"
                 checked={this.state.specificity_filter.enabled}
                 value={this.state.specificity_filter.value}
                 display="Filter above specificity:"/>
@@ -360,5 +396,5 @@ class QueryForm extends React.Component {
   }
 }
 
-export {QueryForm, ItemSelectorInput, TextInput};
+export {QueryForm, ItemSelectorInput, TextInput, ToggledDecimalInput, ToggledIntegerInput, CheckboxInput};
 
