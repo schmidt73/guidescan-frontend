@@ -6,7 +6,7 @@ import {GenomeBrowser} from 'jobs/genomeBrowser';
 import {immutableSetState} from 'utils';
 
 import axios from 'axios';
-import fileDownload from 'js-file-download';
+import { saveAs } from 'file-saver';
 
 import React from 'react';
 
@@ -16,13 +16,8 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
 
-function downloadResults(id, format) {
-  axios.get(process.env.REACT_APP_REST_URL + `/job/result/${format}/${id}`)
-    .then((response) => {
-      fileDownload(R.is(Object, response.data) ?
-                   JSON.stringify(response.data) : response.data,
-                   `results.${format}`);
-    });
+function downloadResults(id, format, extension) {
+  saveAs(process.env.REACT_APP_REST_URL + `/job/result/${format}/${id}`, `results.${extension}`)
 }
 
 class JobCompletedPage extends React.Component {
@@ -62,13 +57,16 @@ class JobCompletedPage extends React.Component {
       <DropdownButton
         style={{margin: "1em"}}
         id="dropdown-basic-button" title="Download results" download>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "json")}>
+        <Dropdown.Item onClick={() => downloadResults(this.props.id, "json", "json")}>
           as json...
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "csv")}>
+        <Dropdown.Item onClick={() => downloadResults(this.props.id, "csv", "csv")}>
           as csv...
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "bed")}>
+        <Dropdown.Item onClick={() => downloadResults(this.props.id, "excel", "xlsx")}>
+          as excel...
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => downloadResults(this.props.id, "bed", "bed")}>
           as bed...
         </Dropdown.Item>
       </DropdownButton>
