@@ -13,7 +13,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
-class ToggledBoundIntegerInput extends React.Component {
+class ToggledBoundNumericInput extends React.Component {
   constructor(props) {
     super(props);
     this.handleCheckedChange = this.handleCheckedChange.bind(this);
@@ -46,7 +46,7 @@ class ToggledBoundIntegerInput extends React.Component {
         <input
           style={{marginLeft: "0.5em"}}
           type="number"
-          step="1"
+          step={this.props.step}
           min={this.props.min}
           max={this.props.max}
           value={this.props.value}
@@ -73,10 +73,10 @@ class LibraryQueryForm extends React.Component {
     this.handleSaturationValueChange = this.handleSaturationValueChange.bind(this);
     this.handlePrime5CheckedChange = this.handlePrime5CheckedChange.bind(this);
 
-    this.available_organisms = ["b6", "hg38"];
+    this.available_organisms = ["mm10", "hg38"];
 
     this.state = {
-      available_organisms: ["b6", "hg38"],
+      available_organisms: ["mm10", "hg38"],
       organism: this.available_organisms[0],
       query_text: "Ccl5\nTrp53",
       num_pools: {
@@ -183,26 +183,28 @@ class LibraryQueryForm extends React.Component {
                 items={this.state.available_organisms}/>
           <Row>
             <Col>
-              <ToggledBoundIntegerInput
+              <ToggledBoundNumericInput
                 style={margin_style("0.1em 0em 0.75em 0")}
                 onCheckedChange={this.handleNumPoolsCheckedChange}
                 onValueChange={this.handleNumPoolsValueChange}
                 name="num-pools-input"
+                step={1}
                 min={1}
                 max={36}
                 checked={this.state.num_pools.enabled}
                 value={this.state.num_pools.value}
                 display="Number of Pools:"/>
-              <ToggledBoundIntegerInput
+              <ToggledBoundNumericInput
                 style={margin_style("0 0em 0.75em 0")}
                 onCheckedChange={this.handleNumEssentialCheckedChange}
                 onValueChange={this.handleNumEssentialValueChange}
                 name="num-essential-input"
                 min={0}
-                max={250}
+                max={1}
+                step={0.05}
                 checked={this.state.num_essential.enabled}
                 value={this.state.num_essential.value}
-                display="Number of Essential Genes (Per Pool):"/>
+                display="Percentage of Essential Genes (Per Pool):"/>
               <CheckboxInput
                 style={margin_style("0 0 0 0")}
                 onCheckedChange={this.handlePrime5CheckedChange}
@@ -211,26 +213,28 @@ class LibraryQueryForm extends React.Component {
                 display="Append 5' G to gRNA"/>
             </Col>
             <Col>
-              <ToggledBoundIntegerInput
+              <ToggledBoundNumericInput
                 style={margin_style("0.1em 0em 0.75em 0")}
                 onCheckedChange={this.handleSaturationCheckedChange}
                 onValueChange={this.handleSaturationValueChange}
                 name="saturation-input"
                 min={1}
+                step={1}
                 max={20}
                 checked={this.state.saturation.enabled}
                 value={this.state.saturation.value}
                 display="Number of Guides Per Gene:"/>
-              <ToggledBoundIntegerInput
+              <ToggledBoundNumericInput
                 style={margin_style("0 0em 0.75em 0")}
                 onCheckedChange={this.handleNumControlCheckedChange}
                 onValueChange={this.handleNumControlValueChange}
                 name="control-input"
                 min={0}
-                max={25000}
+                max={1}
+                step={0.05}
                 checked={this.state.num_control.enabled}
                 value={this.state.num_control.value}
-                display="Number of Control Guides (Per Pool):"/>
+                display="Percentage of Control Guides (Per Pool):"/>
             </Col>
           </Row>
           <TextInput
