@@ -56,8 +56,8 @@ function ContactPage() {
             </p>
           </Col>
           <Col xs="3">
-            <a href="mailto:henrischmidt73@gmail.com" style={contact_style}>
-              &nbsp;henrischmidt73@gmail.com
+            <a href="mailto:henri.schmidt@princeton.edu" style={contact_style}>
+              &nbsp;henri.schmidt@princeton.edu
             </a>
           </Col>
           <Col >
@@ -72,8 +72,8 @@ function ContactPage() {
           project,
           feel free to contact Henri Schmidt at
 
-          <a href="mailto:henrischmidt73@gmail.com">
-            &nbsp;henrischmidt73@gmail.com
+          <a href="mailto:henri.schmidt@princeton.edu">
+            &nbsp;henri.schmidt@princeton.edu
           </a>
 
           &nbsp;as he is currently in charge of the project.

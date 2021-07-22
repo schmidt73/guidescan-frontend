@@ -72,7 +72,7 @@ function processgRNA(onCoordsChange, chr, gRNA) {
 }
 
 function processResultEntry(onCoordsChange, entry) {
-  const chr = entry[0].coords[0]; 
+  const chr = 'chr' + entry[0]['region-name'].split(':')[0]; 
   entry[1].forEach((gRNA) => processgRNA(onCoordsChange, chr, gRNA));
 }
 
@@ -97,19 +97,21 @@ function floatFormatter(precision) {
 }
 
 function offTargetCoordinatesFormatter(cell, row) {
+  console.log(cell);
+
   let startPosition = null;
   let endPosition = null;
-  const direction = cell[0].direction === "positive" ? "+" : "-";
+  const direction = cell.direction === "positive" ? "+" : "-";
   
   if (direction === "+") {
-    startPosition = cell[0].position;
+    startPosition = cell.position;
     endPosition   = startPosition + 23;
   } else {
-    endPosition   = cell[0].position;
+    endPosition   = cell.position;
     startPosition = endPosition - 23;
   }
 
-  return cell[0].chromosome + ":" + startPosition + "-" + endPosition + ":" + direction;
+  return 'chr' + cell.chromosome + ":" + startPosition + "-" + endPosition + ":" + direction;
 }
 
 const OffTargetResultsTableColumns =
@@ -130,10 +132,21 @@ function OffTargetModal(props) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const offTargets = props.gRNA["off-targets"];
+  var offTargets = props.gRNA["off-targets"];
+  offTargets = offTargets.map(off_target => {
+    return {
+      distance: off_target.distance,
+      coords: {
+        position: off_target.position,
+        direction: off_target.direction,
+        chromosome: off_target.chromosome
+      }
+    }
+  });
+
   const offTargetSummary = props.gRNA["off-target-summary"];
 
-  if (!offTargets) {
+  if (offTargets.length == 0) {
     return offTargetSummary;
   }
 
@@ -148,7 +161,7 @@ function OffTargetModal(props) {
           <Modal.Title>Off-targets for guideRNA targeting {props.gRNA["coordinate"]}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <BootstrapTable keyField='coordinate' data={offTargets}
+          <BootstrapTable keyField='coords' data={offTargets}
                           striped={true} columns={OffTargetResultsTableColumns}
                           pagination={paginationFactory()} />
         </Modal.Body>
@@ -273,8 +286,7 @@ class JobResultsTable extends React.Component {
     immutableSetState(this, {status: JobResultsState.RECEIVED,
                              data: response.data});
     this.props.onOrganismChange(this.state.data[0][0].organism);
-    const defaultCoords = this.state.data[0][0].coords;
-    const defaultCoordsString = defaultCoords[0] + ":" + defaultCoords[1] + "-" + defaultCoords[2];
+    const defaultCoordsString = 'chr' + this.state.data[0][0]['region-name'];
     this.props.onCoordsChange(defaultCoordsString);
   }
 
@@ -290,14 +302,13 @@ class JobResultsTable extends React.Component {
       let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
       processJobResults(this.props.onCoordsChange, gRNAs);
       page = gRNAs.map((queryResult) => {
-        const grnaCoords = queryResult[0]["coords"];
-        const grnaCoordsString = grnaCoords[0] + ":" + grnaCoords[1] + "-" + grnaCoords[2];
+        const grnaCoordsString = 'chr' + queryResult[0]["region-name"];
         return (
           <React.Fragment key={queryResult[0]["region-name"]}>
             <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}
                 onClick={() => this.props.onCoordsChange(grnaCoordsString)}>
               <a className="breadcrumb-item" style={{color: "black"}}>
-                {queryResult[0]["region-name"]}
+                {grnaCoordsString}
               </a>
             </h4>
             <BootstrapTable keyField='sequence' data={queryResult[1]}
