@@ -380,7 +380,7 @@ class QueryForm extends React.Component {
             <input id="fileInput" type="file" className="custom-file-input"
                    ref={this.state.fileInput}/>
             <label className="custom-file-label" htmlFor="fileInput">
-              Submit BED, GFF/GTF, FASTA, or TXT files containing genomic coordinates.
+              Submit BED, GFF/GTF, or TXT files containing genomic coordinates.
             </label>
           </div>
           <Row className="justify-content-md-center">

@@ -55,8 +55,8 @@ function processgRNA(onCoordsChange, chr, gRNA) {
     " | 3:" + (summary[3] || 0);
 
   if (gRNA["annotations"].length > 0) {
-    let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr["exons/product"])));
-    gRNA["annotations"] = uniqueAnnotations.join("\n");
+    let annotation = gRNA["annotations"][0];
+    gRNA["annotations"] = "Exon " + annotation["exons/exon_number"] + " of " + annotation["exons/product"];
   } else {
     gRNA["annotations"] = "None"
   }
@@ -72,7 +72,7 @@ function processgRNA(onCoordsChange, chr, gRNA) {
 }
 
 function processResultEntry(onCoordsChange, entry) {
-  const chr = 'chr' + entry[0]['region-name'].split(':')[0]; 
+  const chr = entry[0]['chromosome-name']; 
   entry[1].forEach((gRNA) => processgRNA(onCoordsChange, chr, gRNA));
 }
 
@@ -286,7 +286,9 @@ class JobResultsTable extends React.Component {
     immutableSetState(this, {status: JobResultsState.RECEIVED,
                              data: response.data});
     this.props.onOrganismChange(this.state.data[0][0].organism);
-    const defaultCoordsString = 'chr' + this.state.data[0][0]['region-name'];
+
+    const genomicRegion = this.state.data[0][0];
+    const defaultCoordsString = genomicRegion["chromosome-name"] + ":" + genomicRegion["coords"][1] + "-" + genomicRegion["coords"][2];
     this.props.onCoordsChange(defaultCoordsString);
   }
 
@@ -302,7 +304,7 @@ class JobResultsTable extends React.Component {
       let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
       processJobResults(this.props.onCoordsChange, gRNAs);
       page = gRNAs.map((queryResult) => {
-        const grnaCoordsString = 'chr' + queryResult[0]["region-name"];
+        const grnaCoordsString = queryResult[0]["region-name"];
         return (
           <React.Fragment key={queryResult[0]["region-name"]}>
             <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}
