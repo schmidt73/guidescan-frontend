@@ -23,9 +23,10 @@ function offTargetSummary(off_targets) {
 }
 
 
-function grnaQueryProcessGrna(chr, gRNA) {
+function grnaQueryProcessGrna(gRNA) {
   const strand = (gRNA.direction === "positive") ? "+" : "-";
-  const coords = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
+  const genomicRegion = gRNA['genomic-region'];
+  const coords = genomicRegion['chromosome-name'] + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
   gRNA.coordinate = coords;
 
   const offTargets = gRNA["off-targets"];
@@ -387,7 +388,7 @@ class GrnaJobResultsTable extends React.Component {
           gRNA.sequence = gRNA.grna;
           badGrnas.push(gRNA);
         } else { 
-          grnaQueryProcessGrna(gRNA.chr, gRNA);
+          grnaQueryProcessGrna(gRNA);
           goodGrnas.push(gRNA);
         }
       }
