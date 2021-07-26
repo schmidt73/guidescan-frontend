@@ -55,7 +55,7 @@ function processgRNA(onCoordsChange, chr, gRNA) {
     " | 3:" + (summary[3] || 0);
 
   if (gRNA["annotations"].length > 0) {
-    let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr[1])));
+    let uniqueAnnotations = Array.from(new Set(gRNA["annotations"].map((arr) => arr["exons/product"])));
     gRNA["annotations"] = uniqueAnnotations.join("\n");
   } else {
     gRNA["annotations"] = "None"

@@ -220,7 +220,7 @@ class LibraryQueryForm extends React.Component {
                 name="saturation-input"
                 min={1}
                 step={1}
-                max={20}
+                max={6}
                 checked={this.state.saturation.enabled}
                 value={this.state.saturation.value}
                 display="Number of Guides Per Gene:"/>

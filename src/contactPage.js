@@ -39,13 +39,30 @@ function ContactPage() {
             </p>
           </Col>
           <Col xs="3">
-            <a href="mailto:aventura71@gmail.com" style={contact_style}>
-              &nbsp;aventura71@gmail.com
+            <a href="mailto:venturaa@mskcc.org" style={contact_style}>
+              &nbsp;venturaa@mskcc.org
             </a>
           </Col>
           <Col>
             <a href="https://venturalaboratory.com/" style={contact_style}>
               &nbsp;venturalaboratory.com
+            </a>
+          </Col>
+        </Row>
+        <Row>
+          <Col xs="3">
+            <p style={name_style}>
+              Yuri Pritykin, PhD: 
+            </p>
+          </Col>
+          <Col xs="3">
+            <a href="mailto:pritykin@princeton.edu" style={contact_style}>
+              &nbsp;pritykin@princeton.edu
+            </a>
+          </Col>
+          <Col>
+            <a href="https://pritykin.github.io/" style={contact_style}>
+              &nbsp;pritykin.github.io
             </a>
           </Col>
         </Row>
