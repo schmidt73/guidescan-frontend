@@ -8,20 +8,16 @@ class GenomeBrowser extends React.Component {
     super(props);
 
     this.igvDiv = React.createRef();
-
-    this.state = {
-      creatingBrowser: false,
-      browserSettings:
-                  {organism: null, coords: null, id: null},
-                  browser: null};
+    this.state = {browser: null, browserState: {organism: null, coords: null}};
     this.getOptions = this.getOptions.bind(this);
   }
 
   getOptions() {
     const genome = this.props.organism;
+    console.log(genome);
 
     const options = {
-      genome: genome || "",
+      genome: genome,
       locus: this.props.coords,
       tracks: [
         {
@@ -34,45 +30,27 @@ class GenomeBrowser extends React.Component {
     return options;
   }
 
-  // TODO: Fix this code because it has several race conditions.
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    if (this.state.creatingBrowser) return;
+  componentDidMount() {
+    igv.createBrowser(this.igvDiv.current, this.getOptions()).then((b) => {
+        if(!this._ismounted) return;
+        this.setState({browser: b});
+        this.state.browser.search(this.props.coords);
+    });
 
-    if ((this.props.organism !== this.state.browserSettings.organism ||
-         this.props.id !== this.state.browserSettings.id) &&
-        (!!this.props.id && !!this.props.organism && !!this.props.coords)) {
-      if (this.state.browser) {
-        igv.removeBrowser(this.state.browser);
-      }
-
-      this.setState({creatingBrowser: true});
-      igv.createBrowser(this.igvDiv.current, this.getOptions())
-        .then((b) => {
-          this.setState({
-            creatingBrowser: false,
-            browser: b,
-            browserSettings: {
-              organism: this.props.organism,
-              id: this.props.id,
-              coords: this.props.coords,
-            }});
-        });
-    }
-
-    if (this.props.coords !== this.state.browserSettings.coords
-       && !!this.state.browser) {
-      this.state.browser.search(this.props.coords);
-      this.setState({browserSettings: {
-        organism: this.state.browserSettings.organism,
-        id: this.state.browserSettings.id,
-        coords: this.props.coords
-      }});
-    }
+    this._ismounted = true;
   }
-  
+
+  componentWillUnmount() {
+    this._ismounted = false;
+  }
+
   render() {
+    if (this.state.browser) this.state.browser.search(this.props.coords);
+
     return <div ref={this.igvDiv}/>;
   }
+
+
 }
 
 export {GenomeBrowser};
