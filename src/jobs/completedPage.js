@@ -49,7 +49,7 @@ class JobCompletedPage extends React.Component {
       <Button 
         style={{margin: "1em"}}
         variant="primary" onClick={() => immutableSetState(this, {showResults: !(this.state.showResults)})}>
-        {this.state.showResults ? "Hide results" : "Show results"}
+        {this.state.showResults ? "Show results" : "Hide results"}
       </Button>
     );
 
@@ -84,9 +84,13 @@ class JobCompletedPage extends React.Component {
       } else {
         results = (
           <>
-            <GenomeBrowser id={this.props.id}
-                           organism={this.state.organism}
-                           coords={this.state.coords}/>
+            {
+              (this.state.organism && this.state.coords) ? (
+                <GenomeBrowser id={this.props.id}
+                               organism={this.state.organism}
+                               coords={this.state.coords}/>
+              ) : null
+            }
             <hr/> 
             <JobResultsTable id={this.props.id}
                              onCoordsChange={this.handleCoordsChange}
