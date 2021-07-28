@@ -1,17 +1,36 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {getInfoSupported} from 'jobs/rest';
+import {getInfoSupported, getExamples} from 'jobs/rest';
 import {immutableSetState} from 'utils';
 
 import bsCustomFileInput from 'bs-custom-file-input';
 
+import {Popover, OverlayTrigger} from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
+
+const QuestionPopover = (props) => (
+    <Popover id="popover-basic">
+        <Popover.Title as="h3">Description</Popover.Title>
+        <Popover.Content> 
+            {props.description}
+        </Popover.Content>
+    </Popover>
+);
+
+const QuestionCircle = (props) => {
+  const style = R.mergeLeft(props.style ? props.style : {}, {"fontSize": "1.3rem", "padding": "0 0.5em 0 0.5em"}); 
+  return (
+    <OverlayTrigger trigger={["focus", "hover"]} placement="right" overlay={QuestionPopover(props)}>
+      <i className="bi-question-circle" style={style}></i>
+    </OverlayTrigger>
+  );
+};
 
 class ItemSelectorInput extends React.Component {
   constructor(props) {
@@ -51,6 +70,10 @@ class ToggledIntegerInput extends React.Component {
   }
 
   handleValueChange(e) {
+    if (e.target.value < 0) {
+      return this.props.onValueChange(0);
+    }
+
     this.props.onValueChange(e.target.value);
   }
 
@@ -74,6 +97,7 @@ class ToggledIntegerInput extends React.Component {
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
+        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
       </Form>
     );
   }
@@ -112,6 +136,7 @@ class ToggledDecimalInput extends React.Component {
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
+        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
       </Form>
     );
   }
@@ -157,6 +182,7 @@ class CheckboxInput extends React.Component {
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleChange}/>
+        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
       </Form>
     );
   }
@@ -179,6 +205,9 @@ class QueryForm extends React.Component {
     this.handleCEFilterCheckedChange = this.handleCEFilterCheckedChange.bind(this);
     this.handleCEFilterValueChange = this.handleCEFilterValueChange.bind(this);
 
+    this.onLoadExamplesSuccess = this.onLoadExamplesSuccess.bind(this);
+    this.onLoadExamplesFailure = this.onLoadExamplesFailure.bind(this);
+
     this.onLoadInfoSuccess = this.onLoadInfoSuccess.bind(this);
     this.onLoadInfoFailure = this.onLoadInfoFailure.bind(this);
 
@@ -187,12 +216,18 @@ class QueryForm extends React.Component {
                        this.onLoadInfoFailure,
                        'json');
 
+    this.loadExamples = () =>
+      getExamples(this.onLoadExamplesSuccess,
+                  this.onLoadExamplesFailure,
+                  'json');
+
     this.available_organisms = ["ce11"];
     this.available_enzymes = ["cas9"];
 
     this.state = {
       available_organisms: [],
       available_enzymes: [],
+      examples: {},
       organism: this.available_organisms[0],
       enzyme: this.available_enzymes[0],
       query_text: "chrIV:1100-45000",
@@ -222,10 +257,23 @@ class QueryForm extends React.Component {
   componentDidMount() {
     bsCustomFileInput.init();
     this.loadSource = this.loadInfoSupported();
+    this.loadExamplesToken = this.loadExamples();
   }
 
   componentWillUnmount() {
     this.loadSource.cancel();
+    this.loadExamplesToken.cancel();
+  }
+
+  onLoadExamplesSuccess(response) {
+    immutableSetState(
+      this, {
+        examples: response.data,
+        query_text: response.data["coords"][this.state.organism][this.state.enzyme]
+    });
+  }
+
+  onLoadExamplesFailure(error) {
   }
 
   onLoadInfoSuccess(response) {
@@ -237,11 +285,19 @@ class QueryForm extends React.Component {
   }
 
   handleOrganismSelectionChange(t) {
-    this.setState({organism: t});
+    immutableSetState(
+      this, {
+        organism: t,
+        query_text: this.state.examples["coords"][t][this.state.enzyme]
+    });
   }
 
   handleEnzymeSelectionChange(t) {
-    this.setState({enzyme: t});
+    immutableSetState(
+      this, {
+        enzyme: t,
+        query_text: this.state.examples[this.state.organism][t]["coords"]
+    });
   }
 
   handleFilterAnnotatedChange(t) {
@@ -305,11 +361,11 @@ class QueryForm extends React.Component {
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});
     const margin_style = (m) => ({margin: m});
-
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h3 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>sgRNA Design Tool</h3>
+          <h3 style={R.mergeRight(italics_style, margin_style("0 0 0.5em 0"))}>gRNA Design Tool</h3>
+          <h5 style={margin_style("0 0 1em 0")}>Finds Guidescan2 vetted gRNAs for genomic regions and genes</h5>
           <Row>
             <Col>
               <ItemSelectorInput
@@ -323,6 +379,7 @@ class QueryForm extends React.Component {
                 onCheckedChange={this.handleFlankingCheckedChange}
                 onValueChange={this.handleFlankingValueChange}
                 name="flanking-input"
+                tooltip="Searches for gRNAs in a region surrounding the input genomic region on both the left and right sides."
                 checked={this.state.flanking.enabled}
                 value={this.state.flanking.value}
                 display="Flanking:"/>
@@ -333,11 +390,13 @@ class QueryForm extends React.Component {
                 name="cutting-efficiency-input"
                 checked={this.state.ce_filter.enabled}
                 value={this.state.ce_filter.value}
+                tooltip="Returns only gRNAs with cutting efficiency above this value."
                 display="Filter above cutting efficiency:"/>
               <CheckboxInput
                 style={margin_style("0 0 0 0")}
                 onCheckedChange={this.handleFilterAnnotatedChange}
                 name="filter-annotated"
+                tooltip="Returns only gRNAs that cut within RefSeq annotated exons."
                 checked={this.state.filter_annotated_grnas}
                 display="Filter exonic cutting gRNAs"/>
             </Col>
@@ -353,13 +412,15 @@ class QueryForm extends React.Component {
                 onCheckedChange={this.handleTopNCheckedChange}
                 onValueChange={this.handleTopNValueChange}
                 name="topn-input"
+                tooltip="Returns only the best N gRNAs as ranked by their specificity score."
                 checked={this.state.top_n.enabled}
                 value={this.state.top_n.value}
-                display="Top N Queries:" />
+                display="Top N gRNAs:" />
               <ToggledDecimalInput
                 onCheckedChange={this.handleSpecificityFilterCheckedChange}
                 onValueChange={this.handleSpecificityFilterValueChange}
                 name="specificty-input"
+                tooltip="Returns only gRNAs with specificity above this value."
                 checked={this.state.specificity_filter.enabled}
                 value={this.state.specificity_filter.value}
                 display="Filter above specificity:"/>
@@ -396,5 +457,5 @@ class QueryForm extends React.Component {
   }
 }
 
-export {QueryForm, ItemSelectorInput, TextInput, ToggledDecimalInput, ToggledIntegerInput, CheckboxInput};
+export {QueryForm, ItemSelectorInput, TextInput, ToggledDecimalInput, ToggledIntegerInput, CheckboxInput, QuestionCircle};
 

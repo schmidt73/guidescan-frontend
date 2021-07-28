@@ -98,8 +98,6 @@ function floatFormatter(precision) {
 }
 
 function offTargetCoordinatesFormatter(cell, row) {
-  console.log(cell);
-
   let startPosition = null;
   let endPosition = null;
   const direction = cell.direction === "positive" ? "+" : "-";
@@ -157,7 +155,7 @@ function OffTargetModal(props) {
         {offTargetSummary}
       </a>
 
-      <Modal show={show} onHide={handleClose}>
+      <Modal show={show} onHide={handleClose} size='lg'>
         <Modal.Header closeButton>
           <Modal.Title>Off-targets for guideRNA targeting {props.gRNA["coordinate"]}</Modal.Title>
         </Modal.Header>

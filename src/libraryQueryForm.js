@@ -1,9 +1,9 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {ItemSelectorInput, TextInput, CheckboxInput} from 'queryForm';
+import {ItemSelectorInput, TextInput, CheckboxInput, QuestionCircle} from 'queryForm';
 
-import {getInfoSupported} from 'jobs/rest';
+import {getInfoSupported, getExamples} from 'jobs/rest';
 import {immutableSetState} from 'utils';
 
 import Form from 'react-bootstrap/Form';
@@ -52,6 +52,7 @@ class ToggledBoundNumericInput extends React.Component {
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
+        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
       </Form>
     );
   }
@@ -73,10 +74,19 @@ class LibraryQueryForm extends React.Component {
     this.handleSaturationValueChange = this.handleSaturationValueChange.bind(this);
     this.handlePrime5CheckedChange = this.handlePrime5CheckedChange.bind(this);
 
+    this.onLoadExamplesSuccess = this.onLoadExamplesSuccess.bind(this);
+    this.onLoadExamplesFailure = this.onLoadExamplesFailure.bind(this);
+
+    this.loadExamples = () =>
+      getExamples(this.onLoadExamplesSuccess,
+                  this.onLoadExamplesFailure,
+                  'json');
+
     this.available_organisms = ["mm10", "hg38"];
 
     this.state = {
       available_organisms: ["mm10", "hg38"],
+      examples: {},
       organism: this.available_organisms[0],
       query_text: "Ccl5\nTrp53",
       num_pools: {
@@ -101,8 +111,20 @@ class LibraryQueryForm extends React.Component {
     this.onFormSubmit = this.onFormSubmit.bind(this);
   }
 
+  componentWillUnmount() {
+    this.loadExamplesToken.cancel();
+  }
+  
+  componentDidMount() {
+    this.loadExamplesToken = this.loadExamples();
+  }
+
   handleOrganismSelectionChange(t) {
-    this.setState({organism: t});
+    immutableSetState(
+      this, {
+        organism: t,
+        query_text: this.state.examples["library"][t]
+    });
   }
 
   handleQueryTextChange(t) {
@@ -122,6 +144,17 @@ class LibraryQueryForm extends React.Component {
                               !this.state.num_essential.enabled,
                               this.state.num_essential);
     this.setState({num_essential: num_essential});
+  }
+
+  onLoadExamplesFailure(error) {
+  }
+
+  onLoadExamplesSuccess(response) {
+    immutableSetState(
+      this, {
+        examples: response.data,
+        query_text: response.data["library"][this.state.organism]
+    });
   }
 
   handleNumEssentialValueChange(t) {
@@ -174,7 +207,8 @@ class LibraryQueryForm extends React.Component {
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h3 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>Library Design Tool</h3>
+          <h3 style={R.mergeRight(italics_style, margin_style("0 0 0.5em 0"))}>Library Design Tool</h3>
+          <h5 style={margin_style("0 0 1em 0")}>Designs gRNA library using Guidescan2 library design rules</h5>
           <ItemSelectorInput
                 onSelectionChange={this.handleOrganismSelectionChange}
                 selection={this.state.organism}
@@ -191,6 +225,7 @@ class LibraryQueryForm extends React.Component {
                 step={1}
                 min={1}
                 max={36}
+                tooltip="Split genes across different pools each flanked by a different barcode for easy identification. NEED REAL INFO HERE."
                 checked={this.state.num_pools.enabled}
                 value={this.state.num_pools.value}
                 display="Number of Pools:"/>
@@ -202,6 +237,7 @@ class LibraryQueryForm extends React.Component {
                 min={0}
                 max={1}
                 step={0.05}
+                tooltip="Creates a set of essential control genes. The number of essential genes is expressed as a fraction of total library size."
                 checked={this.state.num_essential.enabled}
                 value={this.state.num_essential.value}
                 display="Percentage of Essential Genes (Per Pool):"/>
@@ -209,6 +245,7 @@ class LibraryQueryForm extends React.Component {
                 style={margin_style("0 0 0 0")}
                 onCheckedChange={this.handlePrime5CheckedChange}
                 name="prime5-g-annotated"
+                tooltip="Replace 5' nucleotide of gRNAs with G for U6 promoter compatibility."
                 checked={this.state.prime5_g}
                 display="Append 5' G to gRNA"/>
             </Col>
@@ -221,6 +258,7 @@ class LibraryQueryForm extends React.Component {
                 min={1}
                 step={1}
                 max={6}
+                tooltip="Number of gRNAs that target each gene. The value must be between 1 and 6 as the Guidescan2 library saturates each gene with 6 guides."
                 checked={this.state.saturation.enabled}
                 value={this.state.saturation.value}
                 display="Number of Guides Per Gene:"/>
@@ -231,6 +269,7 @@ class LibraryQueryForm extends React.Component {
                 name="control-input"
                 min={0}
                 max={1}
+                tooltip="Creates a set of non-targeting and safe-targeting control guides. The number of control guides is expressed as a fraction of total library size."
                 step={0.05}
                 checked={this.state.num_control.enabled}
                 value={this.state.num_control.value}

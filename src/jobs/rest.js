@@ -144,5 +144,14 @@ function getInfoSupported(success_callback, error_callback) {
   return source;
 }
 
-export {getJobResults, getJobStatus, getInfoSupported,
+function getExamples(success_callback, error_callback) {
+  const source = axios.CancelToken.source();
+  axios.get(process.env.REACT_APP_REST_URL + '/info/examples', {
+    cancelToken: source.token
+  }).then(success_callback)
+    .catch(error_callback);
+  return source;
+}
+
+export {getJobResults, getJobStatus, getInfoSupported, getExamples,
         submitQuery, submitGrnaQuery, submitLibraryQuery};

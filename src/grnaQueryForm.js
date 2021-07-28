@@ -84,7 +84,8 @@ class GrnaQueryForm extends React.Component {
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h3 style={R.mergeRight(italics_style, margin_style("0 0 1em 0"))}>gRNA Search</h3>
+          <h3 style={R.mergeRight(italics_style, margin_style("0 0 0.5em 0"))}>gRNA Search</h3>
+          <h5 style={margin_style("0 0 1em 0")}>Search for Guidescan2 vetted gRNAs by their sequence directly</h5>
           <Row>
             <Col>
               <ItemSelectorInput

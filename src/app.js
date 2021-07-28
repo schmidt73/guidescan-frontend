@@ -68,7 +68,7 @@ function CitationBox() {
 function NavigationBar() {
   return (
     <Breadcrumb>
-      <ActiveBreadcrumbItem path="/" exact={true} label="Home" />
+      <ActiveBreadcrumbItem path="/" exact={true} label="gRNA Design" />
       <ActiveBreadcrumbItem path="/library" exact={true} label="Library Design" />
       <ActiveBreadcrumbItem path="/grna" label="gRNA Search" />
       <ActiveBreadcrumbItem path="/about" label="About" />
