@@ -82,11 +82,10 @@ class LibraryQueryForm extends React.Component {
                   this.onLoadExamplesFailure,
                   'json');
 
-    this.available_organisms = ["mm10", "hg38"];
+    this.available_organisms = ["mm39", "hg38"];
 
     this.state = {
-      available_organisms: ["mm10", "hg38"],
-      examples: {},
+      available_organisms: ["mm39", "hg38"],
       organism: this.available_organisms[0],
       query_text: "Ccl5\nTrp53",
       num_pools: {
