@@ -128,10 +128,16 @@ function getJobStatus(success_callback, error_callback, job_id) {
 
 function getJobResults(success_callback, error_callback, format, job_id) {
   const source = axios.CancelToken.source();
-  axios.get(process.env.REACT_APP_REST_URL + '/job/result/' + format + '/' + job_id, {
+
+  let formData = new FormData();
+  formData.append("type", "all");
+  formData.append("key", "{}");
+
+  axios.post(process.env.REACT_APP_REST_URL + '/job/result/' + format + '/' + job_id, formData, {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);
+
   return source;
 }
 
