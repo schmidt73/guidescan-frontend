@@ -131,6 +131,7 @@ function OffTargetModal(props) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
+  console.log(props);
   var offTargets = props.gRNA["off-targets"];
   offTargets = offTargets.map(off_target => {
     return {
@@ -301,6 +302,7 @@ class JobResultsTable extends React.Component {
     switch (this.state.status) {
     case JobResultsState.RECEIVED:
       let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
+      console.log(gRNAs);
       processJobResults(this.props.onCoordsChange, gRNAs);
       page = gRNAs.map((queryResult) => {
         const grnaCoordsString = queryResult[0]["region-name"];
