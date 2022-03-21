@@ -36,10 +36,15 @@ class ItemSelectorInput extends React.Component {
   constructor(props) {
     super(props);
     this.handleChange = this.handleChange.bind(this);
+    if ('predicate' in this.props) {
+      this.predicate = this.props.predicate;
+    } else {
+      this.predicate = (e) => true;
+    }
   }
 
   handleChange(e) {
-    this.props.onSelectionChange(e.target.value);
+    if (this.predicate(e.target.value)) this.props.onSelectionChange(e.target.value);
   }
 
   render() {
@@ -221,15 +226,13 @@ class QueryForm extends React.Component {
                   this.onLoadExamplesFailure,
                   'json');
 
-    this.available_organisms = ["ce11"];
-    this.available_enzymes = ["cas9"];
+    this.available= [{"organism": "ce11", "enzyme": "cas9"}];
 
     this.state = {
-      available_organisms: [],
-      available_enzymes: [],
+      available: [],
       examples: {},
-      organism: this.available_organisms[0],
-      enzyme: this.available_enzymes[0],
+      organism: this.available[0]["organism"],
+      enzyme: this.available[0]["enzyme"],
       query_text: "chrIV:1100-45000",
       specificity_filter: {
         enabled: false,
@@ -277,8 +280,7 @@ class QueryForm extends React.Component {
   }
 
   onLoadInfoSuccess(response) {
-    immutableSetState(this, {available_organisms: response.data["available-organisms"],
-                             available_enzymes: response.data["available-enzymes"]});
+    immutableSetState(this, {available: response.data["available"]});
   }
 
   onLoadInfoFailure(error) {
@@ -361,6 +363,26 @@ class QueryForm extends React.Component {
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});
     const margin_style = (m) => ({margin: m});
+
+    let available_enzymes   = new Set();
+    let available_organisms = new Set();
+
+    for (const i in this.state.available) {
+      available_enzymes.add(this.state.available[i]["enzyme"]);
+      available_organisms.add(this.state.available[i]["organism"]);
+    }
+
+    const enzyme_predicate = (e) => (this.state.available.some((m) =>
+      (m.enzyme == e) && (m.organism = this.state.organism)
+    ));
+
+    const organism_predicate = (o) => (this.state.available.some((m) =>
+      (m.enzyme == this.state.enzyme) && (m.organism = o)
+    ));
+
+    available_enzymes = Array.from(available_enzymes);
+    available_organisms = Array.from(available_organisms);
+
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
@@ -371,9 +393,10 @@ class QueryForm extends React.Component {
               <ItemSelectorInput
                 onSelectionChange={this.handleOrganismSelectionChange}
                 selection={this.state.organism}
+                predicate={organism_predicate}
                 name="organism-selector"
                 display="Organism:"
-                items={this.state.available_organisms}/>
+                items={available_organisms}/>
               <ToggledIntegerInput
                 style={margin_style("0 0em 0.75em 0")}
                 onCheckedChange={this.handleFlankingCheckedChange}
@@ -404,9 +427,10 @@ class QueryForm extends React.Component {
               <ItemSelectorInput
                 onSelectionChange={this.handleEnzymeSelectionChange}
                 selection={this.state.enzyme}
+                predicate={enzyme_predicate}
                 name="enzyme-selector"
                 display="Enzyme:"
-                items={this.state.available_enzymes} />
+                items={available_enzymes} />
               <ToggledIntegerInput
                 style={margin_style("0 1em 0.75em 0")}
                 onCheckedChange={this.handleTopNCheckedChange}

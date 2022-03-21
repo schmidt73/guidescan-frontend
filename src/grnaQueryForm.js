@@ -29,14 +29,12 @@ class GrnaQueryForm extends React.Component {
                        this.onLoadInfoFailure,
                        'json');
 
-    this.available_organisms = ["ce11"];
-    this.available_enzymes = ["cas9"];
+    this.available= [{"organism": "ce11", "enzyme": "cas9"}];
 
     this.state = {
-      available_organisms: [],
-      available_enzymes: [],
-      organism: this.available_organisms[0],
-      enzyme: this.available_enzymes[0],
+      available: [],
+      organism: this.available[0]["organism"],
+      enzyme: this.available[0]["enzyme"],
       query_text: "AACTTTAGTTACACATATGCNGG\nCCTCTATGGTAATTTGGTGTNGG",
     };
 
@@ -52,8 +50,7 @@ class GrnaQueryForm extends React.Component {
   }
 
   onLoadInfoSuccess(response) {
-    immutableSetState(this, {available_organisms: response.data["available-organisms"],
-                             available_enzymes: response.data["available-enzymes"]});
+    immutableSetState(this, {available: response.data["available"]});
   }
 
   onLoadInfoFailure(error) {
@@ -81,6 +78,9 @@ class GrnaQueryForm extends React.Component {
     const padding_style = (p) => ({padding: p});
     const margin_style = (m) => ({margin: m});
 
+    let available_enzymes   = [];
+    let available_organisms = [];
+
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
@@ -93,7 +93,7 @@ class GrnaQueryForm extends React.Component {
                 selection={this.state.organism}
                 name="organism-selector"
                 display="Organism:"
-                items={this.state.available_organisms}/>
+                items={available_organisms}/>
             </Col>
             <Col>
               <ItemSelectorInput
@@ -101,7 +101,7 @@ class GrnaQueryForm extends React.Component {
                 selection={this.state.enzyme}
                 name="enzyme-selector"
                 display="Enzyme:"
-                items={this.state.available_enzymes} />
+                items={available_enzymes} />
             </Col>
           </Row>
           <TextInput
