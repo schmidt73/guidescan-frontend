@@ -79,7 +79,7 @@ class JobPage extends React.Component {
   render() {
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});
-    const pathname = "/#/job/" + this.props.id;
+    const pathname = "/job/" + this.props.id;
 
     let page = null;
     switch (this.state.job_status) {
