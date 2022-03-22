@@ -19,7 +19,7 @@ function DownloadsPage() {
   return (
     <Container>
       <Card style={padding_style("2em")} className="bg-light">
-        <h2>Downloads</h2>
+        <h3>Downloads</h3>
         <hr style={{border: "2px solid black"}}/>
         <Row>
           <Col>

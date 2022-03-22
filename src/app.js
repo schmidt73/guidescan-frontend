@@ -46,11 +46,11 @@ function ActiveBreadcrumbItem(props) {
 function CitationBox() {
   const box_style = {padding: "2em 2em 1em 2em", margin: "2em 0 2em 0"};
   return (
-    <Container>
+    <Container id="citation-box">
       <Card style={box_style}>
-        <h5>Citation</h5>
+        <h4>Citation</h4>
         <hr/>
-        <p style={{fontSize: "1.1em"}}>
+        <p style={{fontSize: "1.15em"}}>
           Perez, A. R., Pritykin, Y., Vidigal, J. A.,
           Chhangawala, S., Zamparo, L., Leslie, C. S., & Ventura,
           A. (2017). <br/>
@@ -71,9 +71,9 @@ function NavigationBar() {
   return (
     <Breadcrumb>
       <ActiveBreadcrumbItem path="/" exact={true} label="gRNA Design" />
-      <ActiveBreadcrumbItem path="/library" exact={true} label="Library Design" />
-      <ActiveBreadcrumbItem path="/grna" label="gRNA Search" />
-      <ActiveBreadcrumbItem path="/about" label="Help" />
+      <ActiveBreadcrumbItem path="/library" exact={true} label="Gene-targeting Library" />
+      <ActiveBreadcrumbItem path="/grna" label="gRNA Sequence Search" />
+      <ActiveBreadcrumbItem path="/about" label="About" />
       <ActiveBreadcrumbItem path="/downloads" label="Downloads" />
       <ActiveBreadcrumbItem path="/contact" label="Contact" />
     </Breadcrumb>
@@ -214,18 +214,16 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/">
             <QueryForm handleSubmit={submitCallback}/>
-            <CitationBox/>
           </Route>
           <Route exact path="/library">
             <LibraryQueryForm handleSubmit={librarySubmitCallback}/>
-            <CitationBox/>
           </Route>
           <Route exact path="/grna">
             <GrnaQueryForm handleSubmit={grnaSubmitCallback}/>
-            <CitationBox/>
           </Route>
           <Route exact path="/about">
             <AboutPage/>
+            <CitationBox/>
           </Route>
           <Route exact path="/contact">
             <ContactPage/>

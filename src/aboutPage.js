@@ -9,17 +9,17 @@ import { HashLink as Link } from 'react-router-hash-link';
 
 function AboutPage() {
   const padding_style = (p) => ({padding: p});
-  const tool_style = {fontWeight: "bold", fontSize: "1.6em"};
+  const tool_style = {fontWeight: "bold", fontSize: "1.3em"};
   const question_style = {fontWeight: "bold", fontSize: "1.3em"};
-  const toc_header_style =  {fontWeight: "bold", fontSize: "1.6em"};
-  const toc_style = {fontSize: "1.3em"};
+  const toc_header_style =  {fontWeight: "bold", fontSize: "1.4em"};
+  const toc_style = {fontSize: "1.15em"};
   const answer_style = {fontSize: "1.15em"};
   const image_style = {maxWidth: "100%", maxHeight: "100%", padding: "1em"};
 
   return (
     <Container>
       <Card style={padding_style("2em")} className="bg-light">
-        <h2>Help</h2>
+        <h3>Help</h3>
         <hr style={{border: "2px solid black"}}/>
         <Row>
           <Col>
@@ -35,13 +35,14 @@ function AboutPage() {
                 </ol>
             </li>
             <li>
-              <Link to="#screen_design_introduction">Screen Design Tool</Link>
+              <Link to="#screen_design_introduction">Gene-targeting Library</Link>
               <ol>
                 <li><Link to="#screen_design_textbox">Textbox Input Format</Link></li>
                 <li><Link to="#screen_design_params">Configuration Parameters</Link></li>
               </ol>
             </li>
-            <li><Link to="#grna_search">gRNA Search Tool</Link></li>
+            <li><Link to="#grna_search">gRNA Sequence Search Tool</Link></li>
+            <li><Link to="#citation-box">Citation</Link></li>
             </ol>
           </Col>
         </Row>
@@ -168,7 +169,7 @@ function AboutPage() {
         <Row>
           <Col>
             <p style={tool_style} id="screen_design_introduction">
-              Screen Design Tool
+              Gene-targeting Library
             </p>
             <p style={answer_style}>
               GuideScan2 analysis identified widespread confounding effects of low-specificity
@@ -213,7 +214,7 @@ function AboutPage() {
         <Row>
           <Col>
             <p style={tool_style} id="grna_search">
-              gRNA Search Tool
+              gRNA Sequence Search Tool
             </p>
             <p style={answer_style}>
               The gRNA search tool offers the ability to search for gRNAs in the Guidescan2

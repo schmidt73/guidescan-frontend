@@ -265,8 +265,10 @@ class LibraryQueryForm extends React.Component {
     return (
       <Container>
         <Card style={padding_style("2em")} className="bg-light">
-          <h3 style={R.mergeRight(italics_style, margin_style("0 0 0.5em 0"))}>Library Design Tool</h3>
-          <h5 style={margin_style("0 0 1em 0")}>Designs gRNA library using Guidescan2 library design rules</h5>
+          <h3 style={R.mergeRight(italics_style, margin_style("0 0 0.5em 0"))}>Gene-targeting Library</h3>
+          <h5 style={margin_style("0 0 1em 0")}>
+            Search within GuideScan2 pre-constructed experimentally validated gene-targeting library for mouse or human
+          </h5>
           <ItemSelectorInput
                 onSelectionChange={this.handleOrganismSelectionChange}
                 selection={this.state.organism}
