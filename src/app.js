@@ -80,7 +80,7 @@ function NavigationBar() {
   );
 }
 
-function DoubleHelix(props) {
+function GuidescanLogo(props) {
   return (
     <a href="/">
       <img src="/img/logo.png"
@@ -99,9 +99,9 @@ function GuidescanJumbotron() {
       <Card style={R.mergeRight(padding_style("2em"), margin_style("0 0 2.5em 0"))} className="bg-light">
         <Row>
           <Col >
-            <DoubleHelix height={55}/>
+            <GuidescanLogo height={55}/>
             <br/><br/>
-            <h3>&nbsp;A generalized CRISPR guideRNA design tool.</h3>
+            <h3>&nbsp;CRISPR guideRNA design and analysis</h3>
           </Col>
         </Row>
       </Card>
