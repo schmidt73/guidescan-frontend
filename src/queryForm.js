@@ -261,6 +261,44 @@ class QueryForm extends React.Component {
     bsCustomFileInput.init();
     this.loadSource = this.loadInfoSupported();
     this.loadExamplesToken = this.loadExamples();
+
+    const to_bool = (s) => s ? (s === "true") : false; 
+
+    const query_text = localStorage.getItem('query_text');
+    if (query_text) this.setState({query_text: query_text});
+
+    const organism = localStorage.getItem('organism');
+    if (organism) this.setState({organism: organism});
+
+    const enzyme = localStorage.getItem('enzyme');
+    if (enzyme) this.setState({enzyme: enzyme});
+
+    const filter_annotated = to_bool(localStorage.getItem('filter_annotated'));
+    if (filter_annotated) this.setState({filter_annotated_grnas: filter_annotated});
+
+    const flanking_enabled = to_bool(localStorage.getItem('flanking_enabled'));
+    const flanking_value = localStorage.getItem('flanking_value');
+    if (flanking_enabled && flanking_value) {
+        this.setState({flanking: {enabled: flanking_enabled, value: flanking_value}});
+    }
+
+    const ce_enabled = to_bool(localStorage.getItem('ce_filter_enabled'));
+    const ce_value = localStorage.getItem('ce_filter_value');
+    if (ce_enabled && ce_value) {
+        this.setState({ce_filter: {enabled: ce_enabled, value: ce_value}});
+    }
+
+    const spec_enabled = to_bool(localStorage.getItem('spec_filter_enabled'));
+    const spec_value = localStorage.getItem('spec_filter_value');
+    if (spec_enabled && spec_value) {
+        this.setState({specificity_filter: {enabled: spec_enabled, value: spec_value}});
+    }
+
+    const topn_enabled = to_bool(localStorage.getItem('topn_enabled'));
+    const topn_value = localStorage.getItem('topn_value');
+    if (topn_enabled && topn_value) {
+        this.setState({top_n: {enabled: topn_enabled, value: topn_value}});
+    }
   }
 
   componentWillUnmount() {
@@ -274,6 +312,9 @@ class QueryForm extends React.Component {
         examples: response.data,
         query_text: response.data["coords"][this.state.organism][this.state.enzyme]
     });
+
+    const query_text = localStorage.getItem('query_text');
+    if (query_text) this.setState({query_text: query_text});
   }
 
   onLoadExamplesFailure(error) {
@@ -292,66 +333,89 @@ class QueryForm extends React.Component {
         organism: t,
         query_text: this.state.examples["coords"][t][this.state.enzyme]
     });
+
+    localStorage.setItem('organism', t);
   }
 
   handleEnzymeSelectionChange(t) {
     immutableSetState(
       this, {
         enzyme: t,
-        query_text: this.state.examples[this.state.organism][t]["coords"]
+        query_text: this.state.examples["coords"][this.state.organism][t]
     });
+
+    localStorage.setItem('enzyme', t);
   }
 
   handleFilterAnnotatedChange(t) {
-    this.setState({filter_annotated_grnas: !this.state.filter_annotated_grnas});
+    const new_bool = !this.state.filter_annotated_grnas;
+    this.setState({filter_annotated_grnas: new_bool});
+    localStorage.setItem('filter_annotated', new_bool);
   }
 
   handleQueryTextChange(t) {
     this.setState({query_text: t});
+    localStorage.setItem('query_text', t);
   }
 
   handleFlankingCheckedChange(t) {
-    const flanking = R.assoc("enabled", !this.state.flanking.enabled, this.state.flanking);
+    const new_bool = !this.state.flanking.enabled;
+    const flanking = R.assoc("enabled", new_bool, this.state.flanking);
     this.setState({flanking: flanking});
+    localStorage.setItem('flanking_enabled', new_bool);
+    localStorage.setItem('flanking_value', this.state.flanking.value);
   }
 
   handleFlankingValueChange(t) {
     const flanking = R.assoc("value", t, this.state.flanking);
     this.setState({flanking: flanking});
+    localStorage.setItem('flanking_value', t);
   }
 
   handleTopNCheckedChange(t) {
-    const top_n = R.assoc("enabled", !this.state.top_n.enabled, this.state.top_n);
+    const new_bool = !this.state.top_n.enabled;
+    const top_n = R.assoc("enabled", new_bool, this.state.top_n);
     this.setState({top_n: top_n});
+    localStorage.setItem('topn_enabled', new_bool);
+    localStorage.setItem('topn_value', this.state.top_n.value);
   }
 
   handleTopNValueChange(t) {
     const top_n = R.assoc("value", t, this.state.top_n);
     this.setState({top_n: top_n});
+    localStorage.setItem('topn_value', t);
   }
 
   handleSpecificityFilterCheckedChange(t) {
+    const new_bool = !this.state.specificity_filter.enabled;
     const s_filter = R.assoc("enabled",
-                             !this.state.specificity_filter.enabled,
+                             new_bool,
                              this.state.specificity_filter);
     this.setState({specificity_filter: s_filter});
+    localStorage.setItem('spec_filter_enabled', new_bool);
+    localStorage.setItem('spec_filter_value', this.state.specificity_filter.value);
   }
 
   handleSpecificityFilterValueChange(t) {
     const s_filter = R.assoc("value", t, this.state.specificity_filter);
     this.setState({specificity_filter: s_filter});
+    localStorage.setItem('spec_filter_value', t);
   }
 
   handleCEFilterCheckedChange(t) {
+    const new_bool = !this.state.ce_filter.enabled;
     const ce_filter = R.assoc("enabled",
-                              !this.state.ce_filter.enabled,
+                              new_bool,
                               this.state.ce_filter);
     this.setState({ce_filter: ce_filter});
+    localStorage.setItem('ce_filter_enabled', new_bool);
+    localStorage.setItem('ce_filter_value', this.state.ce_filter.value);
   }
 
   handleCEFilterValueChange(t) {
     const ce_filter = R.assoc("value", t, this.state.ce_filter);
     this.setState({ce_filter: ce_filter});
+    localStorage.setItem('ce_filter_value', t);
   }
 
   onFormSubmit() {
@@ -373,11 +437,11 @@ class QueryForm extends React.Component {
     }
 
     const enzyme_predicate = (e) => (this.state.available.some((m) =>
-      (m.enzyme == e) && (m.organism = this.state.organism)
+      (m.enzyme == e) && (m.organism == this.state.organism)
     ));
 
     const organism_predicate = (o) => (this.state.available.some((m) =>
-      (m.enzyme == this.state.enzyme) && (m.organism = o)
+      (m.enzyme == this.state.enzyme) && (m.organism == o)
     ));
 
     available_enzymes = Array.from(available_enzymes);

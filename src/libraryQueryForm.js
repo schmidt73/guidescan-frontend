@@ -116,6 +116,41 @@ class LibraryQueryForm extends React.Component {
   
   componentDidMount() {
     this.loadExamplesToken = this.loadExamples();
+    
+    const to_bool = (s) => s ? (s === "true") : false; 
+
+    const query_text = localStorage.getItem('lib_query_text');
+    if (query_text) this.setState({query_text: query_text});
+
+    const organism = localStorage.getItem('lib_organism');
+    if (organism) this.setState({organism: organism});
+
+    const fivepg = to_bool(localStorage.getItem('5pG'));
+    if (fivepg) this.setState({prime5_g: fivepg});
+
+    const num_control_enabled = to_bool(localStorage.getItem('num_control_enabled'));
+    const num_control_value = localStorage.getItem('num_control_value');
+    if (num_control_enabled && num_control_value) {
+        this.setState({num_control: {enabled: num_control_enabled, value: num_control_value}});
+    }
+
+    const num_essential_enabled = to_bool(localStorage.getItem('num_essential_enabled'));
+    const num_essential_value = localStorage.getItem('num_essential_value');
+    if (num_essential_enabled && num_essential_value) {
+        this.setState({num_essential: {enabled: num_essential_enabled, value: num_essential_value}});
+    }
+
+    const saturation_enabled = to_bool(localStorage.getItem('saturation_enabled'));
+    const saturation_value = localStorage.getItem('saturation_value');
+    if (saturation_enabled && saturation_value) {
+        this.setState({saturation: {enabled: saturation_enabled, value: saturation_value}});
+    }
+
+    const num_pools_enabled = to_bool(localStorage.getItem('num_pools_enabled'));
+    const num_pools_value = localStorage.getItem('num_pools_value');
+    if (num_pools_enabled && num_pools_value) {
+        this.setState({num_pools: {enabled: num_pools_enabled, value: num_pools_value}});
+    }
   }
 
   handleOrganismSelectionChange(t) {
@@ -124,10 +159,13 @@ class LibraryQueryForm extends React.Component {
         organism: t,
         query_text: this.state.examples["library"][t]
     });
+    
+    localStorage.setItem('lib_organism', t);
   }
 
   handleQueryTextChange(t) {
     this.setState({query_text: t});
+    localStorage.setItem('lib_query_text', t);
   }
 
   onFormSubmit() {
@@ -135,14 +173,19 @@ class LibraryQueryForm extends React.Component {
   }
 
   handlePrime5CheckedChange(t) {
-    this.setState({prime5_g: !this.state.prime5_g});
+    const new_bool = !this.state.prime5_g;
+    this.setState({prime5_g: new_bool});
+    localStorage.setItem('5pG', new_bool);
   }
 
   handleNumEssentialCheckedChange(t) {
+    const new_bool = !this.state.num_essential.enabled;
     const num_essential = R.assoc("enabled",
-                              !this.state.num_essential.enabled,
+                              new_bool,
                               this.state.num_essential);
     this.setState({num_essential: num_essential});
+    localStorage.setItem('num_essential_enabled', new_bool);
+    localStorage.setItem('num_essential_value', this.state.num_essential.value);
   }
 
   onLoadExamplesFailure(error) {
@@ -154,47 +197,63 @@ class LibraryQueryForm extends React.Component {
         examples: response.data,
         query_text: response.data["library"][this.state.organism]
     });
+
+    const query_text = localStorage.getItem('lib_query_text');
+    if (query_text) this.setState({query_text: query_text});
   }
 
   handleNumEssentialValueChange(t) {
     const num_essential = R.assoc("value", t, this.state.num_essential);
     this.setState({num_essential: num_essential});
+    localStorage.setItem('num_essential_value', t);
   }
 
   handleNumControlCheckedChange(t) {
+    const new_bool = !this.state.num_control.enabled;
     const num_control = R.assoc("enabled",
-                              !this.state.num_control.enabled,
+                              new_bool,
                               this.state.num_control);
     this.setState({num_control: num_control});
+    localStorage.setItem('num_control_enabled', new_bool);
+    localStorage.setItem('num_control_value', this.state.num_control.value);
   }
 
   handleNumControlValueChange(t) {
     const num_control = R.assoc("value", t, this.state.num_control);
     this.setState({num_control: num_control});
+    localStorage.setItem('num_control_value', t);
   }
 
   handleSaturationCheckedChange(t) {
+    const new_bool = !this.state.saturation.enabled;
     const saturation = R.assoc("enabled",
-                              !this.state.saturation.enabled,
+                              new_bool,
                               this.state.saturation);
     this.setState({saturation: saturation});
+    localStorage.setItem('saturation_enabled', new_bool);
+    localStorage.setItem('saturation_value', this.state.saturation.value);
   }
 
   handleSaturationValueChange(t) {
     const saturation = R.assoc("value", t, this.state.saturation);
     this.setState({saturation: saturation});
+    localStorage.setItem('saturation_value', t);
   }
 
   handleNumPoolsCheckedChange(t) {
+    const new_bool = !this.state.num_pools.enabled;
     const num_pools = R.assoc("enabled",
-                              !this.state.num_pools.enabled,
+                              new_bool,
                               this.state.num_pools);
     this.setState({num_pools: num_pools});
+    localStorage.setItem('num_pools_enabled', new_bool);
+    localStorage.setItem('num_pools_value', this.state.num_pools.value);
   }
 
   handleNumPoolsValueChange(t) {
     const num_pools = R.assoc("value", t, this.state.num_pools);
     this.setState({num_pools: num_pools});
+    localStorage.setItem('num_pools_value', t);
   }
 
   render() {

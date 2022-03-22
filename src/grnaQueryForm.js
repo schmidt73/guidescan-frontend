@@ -78,8 +78,26 @@ class GrnaQueryForm extends React.Component {
     const padding_style = (p) => ({padding: p});
     const margin_style = (m) => ({margin: m});
 
-    let available_enzymes   = [];
-    let available_organisms = [];
+    let available_enzymes   = new Set();
+    let available_organisms = new Set();
+
+    for (const i in this.state.available) {
+      available_enzymes.add(this.state.available[i]["enzyme"]);
+      available_organisms.add(this.state.available[i]["organism"]);
+    }
+
+    const enzyme_predicate = (e) => (this.state.available.some((m) =>
+      (m.enzyme == e) && (m.organism == this.state.organism)
+    ));
+
+    const organism_predicate = (o) => (this.state.available.some((m) =>
+      (m.enzyme == this.state.enzyme) && (m.organism == o)
+    ));
+
+    available_enzymes = Array.from(available_enzymes);
+    available_organisms = Array.from(available_organisms);
+
+
 
     return (
       <Container>
@@ -91,6 +109,7 @@ class GrnaQueryForm extends React.Component {
               <ItemSelectorInput
                 onSelectionChange={this.handleOrganismSelectionChange}
                 selection={this.state.organism}
+                predicate={organism_predicate}
                 name="organism-selector"
                 display="Organism:"
                 items={available_organisms}/>
@@ -99,6 +118,7 @@ class GrnaQueryForm extends React.Component {
               <ItemSelectorInput
                 onSelectionChange={this.handleEnzymeSelectionChange}
                 selection={this.state.enzyme}
+                predicate={enzyme_predicate}
                 name="enzyme-selector"
                 display="Enzyme:"
                 items={available_enzymes} />

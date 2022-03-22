@@ -131,8 +131,7 @@ function OffTargetModal(props) {
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  console.log(props);
-  var offTargets = props.gRNA["off-targets"];
+  var offTargets = props.gRNA["off-targets"] || [];
   offTargets = offTargets.map(off_target => {
     return {
       distance: off_target.distance,
