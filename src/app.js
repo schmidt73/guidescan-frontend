@@ -1,4 +1,5 @@
 import React from 'react';
+import * as R from 'ramda';
 
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Jumbotron from 'react-bootstrap/Jumbotron';
@@ -12,6 +13,7 @@ import './app.scss';
 import {QueryForm} from './queryForm.js';
 import {GrnaQueryForm} from './grnaQueryForm.js';
 import {LibraryQueryForm} from './libraryQueryForm.js';
+import {DownloadsPage} from './downloadsPage.js';
 import {AboutPage} from 'aboutPage';
 import {ContactPage} from 'contactPage';
 import {submitQuery, submitGrnaQuery, submitLibraryQuery} from 'jobs/rest';
@@ -71,7 +73,8 @@ function NavigationBar() {
       <ActiveBreadcrumbItem path="/" exact={true} label="gRNA Design" />
       <ActiveBreadcrumbItem path="/library" exact={true} label="Library Design" />
       <ActiveBreadcrumbItem path="/grna" label="gRNA Search" />
-      <ActiveBreadcrumbItem path="/about" label="About" />
+      <ActiveBreadcrumbItem path="/about" label="Help" />
+      <ActiveBreadcrumbItem path="/downloads" label="Downloads" />
       <ActiveBreadcrumbItem path="/contact" label="Contact" />
     </Breadcrumb>
   );
@@ -80,27 +83,28 @@ function NavigationBar() {
 function DoubleHelix(props) {
   return (
     <a href="/">
-      <img src="/img/helix.png"
-           width={props.width} height={props.height}
-           alt="double helix"/>
+      <img src="/img/logo.png"
+           height={props.height}
+           objectFit="contain"
+           alt="logo"/>
     </a>
   );
 }
 
 function GuidescanJumbotron() {
+  const padding_style = (p) => ({padding: p});
+  const margin_style = (m) => ({margin: m});
   return (
     <Container>
-      <Jumbotron>
+      <Card style={R.mergeRight(padding_style("2em"), margin_style("0 0 2.5em 0"))} className="bg-light">
         <Row>
-          <Col xs="auto">
-            <DoubleHelix width={100} height={100}/>
-          </Col>
-          <Col className="py-3 pl-4">
-            <h1>GuideScan2</h1>
-            <h4>A generalized CRISPR guideRNA design tool.</h4>
+          <Col >
+            <DoubleHelix height={55}/>
+            <br/><br/>
+            <h3>&nbsp;A generalized CRISPR guideRNA design tool.</h3>
           </Col>
         </Row>
-      </Jumbotron>
+      </Card>
     </Container>
   );
 }
@@ -225,6 +229,9 @@ class App extends React.Component {
           </Route>
           <Route exact path="/contact">
             <ContactPage/>
+          </Route>
+          <Route exact path="/downloads">
+            <DownloadsPage/>
           </Route>
           <Route exact path='/job/:id'
                  render={({match}) => (<JobPage id={match.params.id}/>)}>
