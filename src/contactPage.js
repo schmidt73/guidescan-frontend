@@ -93,7 +93,7 @@ function ContactPage() {
             &nbsp;henri.schmidt@princeton.edu
           </a>
 
-          &nbsp;as he is currently in charge of the project.
+          &nbsp;as he is currently in charge.
 
           All bug reports are greatly appreciated.
         </p>
