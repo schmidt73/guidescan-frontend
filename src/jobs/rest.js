@@ -39,7 +39,7 @@ function submitQuery(success_callback, error_callback, data) {
   }
 
   const source = axios.CancelToken.source();
-  axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
+  axios.post('/backend/query', formData, {
     cancelToken: source.token,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -58,7 +58,7 @@ function submitGrnaQuery(success_callback, error_callback, data) {
   formData.append("query-type", "grna");
 
   const source = axios.CancelToken.source();
-  axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
+  axios.post('/backend/query', formData, {
     cancelToken: source.token,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -94,7 +94,7 @@ function submitLibraryQuery(success_callback, error_callback, data) {
   formData.append("prime5-g", data.prime5_g);
 
   const source = axios.CancelToken.source();
-  axios.post(process.env.REACT_APP_REST_URL + '/query', formData, {
+  axios.post('/backend/query', formData, {
     cancelToken: source.token,
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -107,7 +107,7 @@ function submitLibraryQuery(success_callback, error_callback, data) {
 
 function getCompletions(success_callback, error_callback, organism, symbol) {
   const source = axios.CancelToken.source();
-  axios.get(process.env.REACT_APP_REST_URL + '/info/autocomplete', {
+  axios.get('/backend/info/autocomplete', {
     params: {
       organism: organism,
       symbol: symbol
@@ -119,7 +119,7 @@ function getCompletions(success_callback, error_callback, organism, symbol) {
 
 function getJobStatus(success_callback, error_callback, job_id) {
   const source = axios.CancelToken.source();
-  axios.get(process.env.REACT_APP_REST_URL + '/job/status/' + job_id, {
+  axios.get('/backend/job/status/' + job_id, {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);
@@ -133,7 +133,7 @@ function getJobResults(success_callback, error_callback, format, job_id) {
   formData.append("type", "all");
   formData.append("key", "{}");
 
-  axios.post(process.env.REACT_APP_REST_URL + '/job/result/' + format + '/' + job_id, formData, {
+  axios.post('/backend/job/result/' + format + '/' + job_id, formData, {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);
@@ -143,7 +143,7 @@ function getJobResults(success_callback, error_callback, format, job_id) {
 
 function getInfoSupported(success_callback, error_callback) {
   const source = axios.CancelToken.source();
-  axios.get(process.env.REACT_APP_REST_URL + '/info/supported', {
+  axios.get('/backend/info/supported', {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);
@@ -152,7 +152,7 @@ function getInfoSupported(success_callback, error_callback) {
 
 function getExamples(success_callback, error_callback) {
   const source = axios.CancelToken.source();
-  axios.get(process.env.REACT_APP_REST_URL + '/info/examples', {
+  axios.get('/backend/info/examples', {
     cancelToken: source.token
   }).then(success_callback)
     .catch(error_callback);

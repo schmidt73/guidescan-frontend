@@ -2,9 +2,9 @@ import {JobCompletedPage} from './completedPage';
 
 import {immutableSetState} from '../utils';
 import {getJobStatus} from './rest';
-import {useLocation} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
@@ -18,71 +18,41 @@ const JobStatus = {
 
 const UPDATE_INTERVAL = 1000;
 
-class JobPage extends React.Component {
-  constructor(props) {
-    super(props);
+function JobPage() {
+    const { id } = useParams();
+    const [job_status, setJobStatus] = useState(JobStatus.UNKNOWN);
+    const [job_type, setJobType] = useState(null);
+    const [failure_msg, setFailureMessage] = useState(null);
 
-    this.onJobStatusSuccess = this.onJobStatusSuccess.bind(this);
-    this.onJobStatusError = this.onJobStatusError.bind(this);
-    this.updateJobStatus = (id) => () =>
-      this.updateSource = getJobStatus(this.onJobStatusSuccess,
-                                       this.onJobStatusError,
-                                       id);
+    useEffect(() => {
+        function onJobStatusSuccess(response) {
+            const jstatus = response.data["job-status"];
+            const jtype = response.data["result-type"];
 
-    this.state = {
-      job_status: JobStatus.UNKNOWN,
-    };
-  }
+            if (jstatus === "pending") {
+                setJobStatus(JobStatus.PENDING);
+            } else if (jstatus === "completed") {
+                setJobStatus(JobStatus.COMPLETED); 
+                setJobType(jtype);
+            } else if (jstatus === "failed") {
+                setFailureMessage(response.data["failure"]);
+                setJobStatus(JobStatus.FAILED);
+            } 
+        }
 
-  componentDidMount() {
-    const update = this.updateJobStatus(this.props.id);
-    update();
-    this.statusInterval = setInterval(update, UPDATE_INTERVAL);
-  }
+        function onJobStatusError(response) {
+            setJobStatus(JobStatus.UNKNOWN);
+        }
 
-  componentDidUpdate() {
-    this.updateSource.cancel();
+        getJobStatus(onJobStatusSuccess, onJobStatusError, id);
+    }); 
 
-    clearInterval(this.statusInterval);
-    const update = this.updateJobStatus(this.props.id);
-    update();
-    this.statusInterval = setInterval(update, UPDATE_INTERVAL);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.statusInterval);
-    this.updateSource.cancel();
-  }
-
-  onJobStatusError(error) {
-    immutableSetState(this, {job_status: JobStatus.NOT_FOUND});
-
-  }
-
-  onJobStatusSuccess(response) {
-    const status = response.data["job-status"];
-    const jobType = response.data["result-type"];
-
-    if (status === "pending") {
-      immutableSetState(this, {job_status: JobStatus.PENDING});
-    } else if (status === "completed") {
-      immutableSetState(this, {job_status: JobStatus.COMPLETED, jobType: jobType});
-    } else if (status === "failed") {
-      const failure_msg = response.data["failure"];
-      immutableSetState(this, {job_status: JobStatus.FAILED,
-                               job_err_msg: failure_msg});
-    } else {
-      immutableSetState(this, {job_status: JobStatus.UNKNOWN});
-    }
-  }
-
-  render() {
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});
-    const pathname = "/job/" + this.props.id;
+    const pathname = "/job/" + id;
 
     let page = null;
-    switch (this.state.job_status) {
+    switch (job_status) {
     case JobStatus.PENDING:
       page = (
         <>
@@ -115,7 +85,7 @@ class JobPage extends React.Component {
           <hr/>
           <div className="alert alert-danger">
             {
-              this.state.job_err_msg.split('\n').map(
+              job_err_msg.split('\n').map(
                 (item, key) => <React.Fragment key={key}>{item}<br/></React.Fragment>
               )
             }
@@ -125,7 +95,7 @@ class JobPage extends React.Component {
       break;
     case JobStatus.COMPLETED:
       page = (
-        <JobCompletedPage id={this.props.id} jobType={this.state.jobType}/>
+        <JobCompletedPage id={id} jobType={job_type}/>
       );
       break;
     default:
@@ -148,7 +118,6 @@ class JobPage extends React.Component {
         </Card>
       </Container>
     );
-  }
 }
 
 export {JobPage};

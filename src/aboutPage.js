@@ -136,33 +136,34 @@ function AboutPage() {
 
             <p style={answer_style}>
               We provide working examples where we use the same regions across all examples for clarity.<br/><br/>
-              <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid TXT file upload:</div>
-              <hr/>
+            </p>
+
+            <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid TXT file upload:</div>
+            <hr/>
               <code style={{textAlign: "center"}}>
                 chr4:312000-320000<br/>
                 chr4:312000-313000<br/>
                 chr4:312000-315000<br/>
               </code>
-              <hr/>
+            <hr/>
 
-              <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid BED file upload:</div>
-              <hr/>
-              <code style={{textAlign: "center"}}>
-                chr4&emsp;312000&emsp;320000&emsp;chr_4_example_1&emsp;0&emsp;+<br/>
-                chr4&emsp;312000&emsp;313000&emsp;chr_4_example_2&emsp;0&emsp;+<br/>
-                chr4&emsp;312000&emsp;315000&emsp;chr_4_example_3&emsp;0&emsp;+<br/>
-              </code>
-              <hr/>
+            <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid BED file upload:</div>
+            <hr/>
+            <code style={{textAlign: "center"}}>
+              chr4&emsp;312000&emsp;320000&emsp;chr_4_example_1&emsp;0&emsp;+<br/>
+              chr4&emsp;312000&emsp;313000&emsp;chr_4_example_2&emsp;0&emsp;+<br/>
+              chr4&emsp;312000&emsp;315000&emsp;chr_4_example_3&emsp;0&emsp;+<br/>
+            </code>
+            <hr/>
 
-              <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid GFF/GTF file upload:</div>
-              <hr/>
-              <code style={{textAlign: "center"}}>
-                chr4&emsp;example_1&emsp;interval&emsp;312000&emsp;320000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
-                chr4&emsp;example_2&emsp;interval&emsp;312000&emsp;313000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
-                chr4&emsp;example_3&emsp;interval&emsp;312000&emsp;315000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
-              </code>
-              <hr/>
-            </p>
+            <div style={{fontStyle: "italic", textAlign: "center"}}>Example of a valid GFF/GTF file upload:</div>
+            <hr/>
+            <code style={{textAlign: "center"}}>
+              chr4&emsp;example_1&emsp;interval&emsp;312000&emsp;320000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
+              chr4&emsp;example_2&emsp;interval&emsp;312000&emsp;313000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
+              chr4&emsp;example_3&emsp;interval&emsp;312000&emsp;315000&emsp;.&emsp;+&emsp;.&emsp;.<br/>
+            </code>
+            <hr/>
           </Col>
         </Row>
         <hr style={{border: "2px solid black"}}/>

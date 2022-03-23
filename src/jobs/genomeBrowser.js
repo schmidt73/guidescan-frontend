@@ -21,7 +21,7 @@ class GenomeBrowser extends React.Component {
       locus: this.props.coords,
       tracks: [
         {
-          "url": process.env.REACT_APP_REST_URL + "/job/result/bed/" + this.props.id,
+          "url": "/backend/job/result/bed/" + this.props.id,
           "format": "bed"
         }
       ]

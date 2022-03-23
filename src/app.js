@@ -16,7 +16,7 @@ import {DownloadsPage} from './downloadsPage.js';
 import {AboutPage} from './aboutPage';
 import {ContactPage} from './contactPage';
 import {submitQuery, submitGrnaQuery, submitLibraryQuery} from './jobs/rest';
-import {JobPage} from './jobs/jobPage';
+import {JobPage2} from './jobs/jobPage';
 
 import {
   Routes,
@@ -67,7 +67,7 @@ function CitationBox() {
 
 function NavigationBar() {
   return (
-    <Breadcrumb class="navbar">
+    <Breadcrumb className="navbar">
       <ActiveBreadcrumbItem path="/" exact={true} label="gRNA Design" />
       <ActiveBreadcrumbItem path="/library" exact={true} label="Gene-targeting Library" />
       <ActiveBreadcrumbItem path="/grna" label="gRNA Sequence Search" />
@@ -216,7 +216,7 @@ class App extends React.Component {
           <Route exact path="/about" element={<React.Fragment><AboutPage/><CitationBox/></React.Fragment>}/>
           <Route exact path="/contact" element={<ContactPage/>}/>
           <Route exact path="/downloads" element={<DownloadsPage/>}/>
-          <Route exact path='/job/:id' render={({match}) => (<JobPage id={match.params.id}/>)}/>
+          <Route exact path='/job/:id' element={<JobPage/>}/>
         </Routes>
         {successToast}
         {failureToast}

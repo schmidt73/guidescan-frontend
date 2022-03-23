@@ -11,13 +11,14 @@ import { saveAs } from 'file-saver';
 import React from 'react';
 
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Container from 'react-bootstrap/Container';
 
 function downloadResults(id, format, extension) {
-  saveAs(process.env.REACT_APP_REST_URL + `/job/result/${format}/${id}`, `results.${extension}`)
+  saveAs(`/backend/job/result/${format}/${id}`, `results.${extension}`)
 }
 
 class JobCompletedPage extends React.Component {
@@ -104,8 +105,8 @@ class JobCompletedPage extends React.Component {
       <Container>
         <h2 style={center_style}>Job Results</h2>
         <Row className="justify-content-md-center">
-          {(this.props.jobType === "library") ? null : showResultsButton}
-          {downloadResultsButton}
+          <Col className="col-sm-auto">{(this.props.jobType === "library") ? null : showResultsButton}</Col>
+          <Col className="col-sm-auto">{downloadResultsButton}</Col>
         </Row>
         {(results ? (
           <>

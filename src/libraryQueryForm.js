@@ -36,7 +36,7 @@ class ToggledBoundNumericInput extends React.Component {
 
   render() {
     return (
-      <Form style={this.props.style} inline>
+      <Form style={this.props.style} >
         <Row className="justify-content-md-left">
         <Col className="col-md-auto">
         <Form.Check
