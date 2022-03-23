@@ -1,10 +1,10 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {ItemSelectorInput, TextInput, CheckboxInput, QuestionCircle} from 'queryForm';
+import {ItemSelectorInput, TextInput, CheckboxInput, QuestionCircle} from './queryForm';
 
-import {getInfoSupported, getExamples} from 'jobs/rest';
-import {immutableSetState} from 'utils';
+import {getInfoSupported, getExamples} from './jobs/rest';
+import {immutableSetState} from './utils';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -37,14 +37,19 @@ class ToggledBoundNumericInput extends React.Component {
   render() {
     return (
       <Form style={this.props.style} inline>
+        <Row className="justify-content-md-left">
+        <Col className="col-md-auto">
         <Form.Check
+          style={{paddingTop: "0.35em"}}
           type={"checkbox"}
           id={"toggledNumericInputCheckbox-" + this.props.name}
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleCheckedChange}/>
-        <input
-          style={{marginLeft: "0.5em"}}
+        </Col>
+        <Col className="col-sm-2">
+        <Form.Control
+          style={{marginLeft: "-0.3em"}}
           type="number"
           step={this.props.step}
           min={this.props.min}
@@ -52,7 +57,9 @@ class ToggledBoundNumericInput extends React.Component {
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
-        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
+        </Col>
+        <Col className="col-md-auto" style={{marginLeft: "-1.5em", paddingTop: "0.2em"}}> {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null} </Col>
+        </Row>
       </Form>
     );
   }
@@ -278,7 +285,7 @@ class LibraryQueryForm extends React.Component {
           <Row>
             <Col>
               <ToggledBoundNumericInput
-                style={margin_style("0.1em 0em 0.75em 0")}
+                style={margin_style("1.75em 0em 0.75em 0")}
                 onCheckedChange={this.handleNumPoolsCheckedChange}
                 onValueChange={this.handleNumPoolsValueChange}
                 name="num-pools-input"
@@ -290,7 +297,7 @@ class LibraryQueryForm extends React.Component {
                 value={this.state.num_pools.value}
                 display="Number of Pools:"/>
               <ToggledBoundNumericInput
-                style={margin_style("0 0em 0.75em 0")}
+                style={margin_style("1.4em 0em 0.75em 0")}
                 onCheckedChange={this.handleNumEssentialCheckedChange}
                 onValueChange={this.handleNumEssentialValueChange}
                 name="num-essential-input"
@@ -311,7 +318,7 @@ class LibraryQueryForm extends React.Component {
             </Col>
             <Col>
               <ToggledBoundNumericInput
-                style={margin_style("0.1em 0em 0.75em 0")}
+                style={margin_style("1.75em 0em 0.75em 0")}
                 onCheckedChange={this.handleSaturationCheckedChange}
                 onValueChange={this.handleSaturationValueChange}
                 name="saturation-input"
@@ -323,7 +330,7 @@ class LibraryQueryForm extends React.Component {
                 value={this.state.saturation.value}
                 display="Number of Guides Per Gene:"/>
               <ToggledBoundNumericInput
-                style={margin_style("0 0em 0.75em 0")}
+                style={margin_style("1.4em 0em 0.75em 0")}
                 onCheckedChange={this.handleNumControlCheckedChange}
                 onValueChange={this.handleNumControlValueChange}
                 name="control-input"
@@ -336,6 +343,7 @@ class LibraryQueryForm extends React.Component {
                 display="Percentage of Control Guides (Per Pool):"/>
             </Col>
           </Row>
+          <hr style={{marginBottom: "-0.2em"}}/>
           <TextInput
             display={
               <h5 style={{padding: "1em 0 0.5em 0"}}>
@@ -344,12 +352,14 @@ class LibraryQueryForm extends React.Component {
             }
             onTextChange={this.handleQueryTextChange}
             text={this.state.query_text}/>
-          <Row className="justify-content-md-center">
+          <Row className="justify-content-center">
+            <Col className="col-auto">
             <Button 
               style={{marginTop: "1em"}}
               variant="primary" onClick={this.onFormSubmit}>
               Submit query
             </Button>
+            </Col>
           </Row>
         </Card>
       </Container>

@@ -1,6 +1,6 @@
-# Guidescan 1.5 Front-end
+# Guidescan2 Front-end
 
-This is the front-end for the Guidescan 1.5 project. It relies on the
+This is the front-end for the Guidescan2 project. It relies on the
 REST API back-end to be running. That project is located here:
 [guidescan-web](https://github.com/schmidt73/guidescan-web).
 

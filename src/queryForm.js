@@ -1,12 +1,13 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {getInfoSupported, getExamples} from 'jobs/rest';
-import {immutableSetState} from 'utils';
+import {getInfoSupported, getExamples} from './jobs/rest';
+import {immutableSetState} from './utils';
 
 import bsCustomFileInput from 'bs-custom-file-input';
 
-import {Popover, OverlayTrigger} from 'react-bootstrap';
+import Popover from 'react-bootstrap/Popover';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
@@ -16,10 +17,10 @@ import Card from 'react-bootstrap/Card';
 
 const QuestionPopover = (props) => (
     <Popover id="popover-basic">
-        <Popover.Title as="h3">Description</Popover.Title>
-        <Popover.Content> 
+        <Popover.Header as="h3">Description</Popover.Header>
+        <Popover.Body> 
             {props.description}
-        </Popover.Content>
+        </Popover.Body>
     </Popover>
 );
 
@@ -58,7 +59,7 @@ class ItemSelectorInput extends React.Component {
         <Form.Label column xs="auto">{this.props.display}</Form.Label>
         <Col>
           <Form.Control as="select" onChange={this.handleChange}
-                        value={this.props.selection}custom>
+                        value={this.props.selection}>
             {items}
           </Form.Control>
         </Col>
@@ -88,21 +89,28 @@ class ToggledIntegerInput extends React.Component {
 
   render() {
     return (
-      <Form style={this.props.style} inline>
+      <Form style={this.props.style} inline="true">
+        <Row className="justify-content-md-left">
+        <Col className="col-md-auto">
         <Form.Check
+          style={{paddingTop: "0.35em"}}
           type={"checkbox"}
           id={"toggledNumericInputCheckbox-" + this.props.name}
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleCheckedChange}/>
-        <input
-          style={{marginLeft: "0.5em"}}
+        </Col>
+        <Col className="col-sm-2">
+        <Form.Control
+          style={{marginLeft: "-0.5em"}}
           type="number"
           step="1"
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
-        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
+        </Col>
+        <Col className="col-md-auto" style={{marginLeft: "-1.5em", paddingTop: "0.2em"}}> {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null} </Col>
+        </Row>
       </Form>
     );
   }
@@ -125,15 +133,20 @@ class ToggledDecimalInput extends React.Component {
 
   render() {
     return (
-      <Form style={this.props.style} inline>
+      <Form style={this.props.style} inline="true">
+        <Row className="justify-content-md-left">
+        <Col className="col-md-auto">
         <Form.Check
+          style={{paddingTop: "0.35em"}}
           type={"checkbox"}
           id={"toggledNumericInputCheckbox-" + this.props.name}
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleCheckedChange}/>
-        <input
-          style={{marginLeft: "0.5em"}}
+        </Col>
+        <Col className="col-sm-2">
+        <Form.Control
+          style={{marginLeft: "0em"}}
           type="number"
           step="0.1"
           min="0"
@@ -141,7 +154,9 @@ class ToggledDecimalInput extends React.Component {
           value={this.props.value}
           disabled={!this.props.checked}
           onChange={this.handleValueChange}/>
-        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
+        </Col>
+        <Col className="col-md-auto" style={{marginLeft: "-0.7em", paddingTop: "0.2em"}}> {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null} </Col>
+        </Row>
       </Form>
     );
   }
@@ -180,14 +195,19 @@ class CheckboxInput extends React.Component {
 
   render() {
     return (
-      <Form style={this.props.style} inline>
+      <Form style={this.props.style} inline="true">
+        <Row className="justify-content-md-left">
+        <Col className="col-md-auto">
         <Form.Check
+          style={{marginTop: "0.23em"}}
           type={"checkbox"}
           id={"checkbox-" + this.props.name}
           checked={this.props.checked}
           label={this.props.display}
           onChange={this.handleChange}/>
-        {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null}
+        </Col>
+        <Col className="col-md-auto" style={{marginLeft: "-1.2em"}}> {this.props.tooltip ? <QuestionCircle description={this.props.tooltip}/> : null} </Col>
+        </Row>
       </Form>
     );
   }
@@ -424,7 +444,7 @@ class QueryForm extends React.Component {
 
   render() {
     const italics_style = {fontStyle: "italic"};
-    const center_style = {textAlign: "center"};
+    const center_style = {textAlign: "center", marginTop: "0.3em"};
     const padding_style = (p) => ({padding: p});
     const margin_style = (m) => ({margin: m});
 
@@ -462,7 +482,7 @@ class QueryForm extends React.Component {
                 display="Organism:"
                 items={available_organisms}/>
               <ToggledIntegerInput
-                style={margin_style("0 0em 0.75em 0")}
+                style={margin_style("1.75em 0 0.75em 0")}
                 onCheckedChange={this.handleFlankingCheckedChange}
                 onValueChange={this.handleFlankingValueChange}
                 name="flanking-input"
@@ -496,7 +516,7 @@ class QueryForm extends React.Component {
                 display="Enzyme:"
                 items={available_enzymes} />
               <ToggledIntegerInput
-                style={margin_style("0 1em 0.75em 0")}
+                style={margin_style("1.75em 1em 0.75em 0")}
                 onCheckedChange={this.handleTopNCheckedChange}
                 onValueChange={this.handleTopNValueChange}
                 name="topn-input"
@@ -522,22 +542,30 @@ class QueryForm extends React.Component {
                       of interest."}
             onTextChange={this.handleQueryTextChange}
             text={this.state.query_text}/>
-          <h2 style={R.merge(italics_style, center_style)}>
+          <h2 style={R.mergeRight(italics_style, center_style)}>
             OR
           </h2>
           <div className="custom-file">
-            <input id="fileInput" type="file" className="custom-file-input"
-                   ref={this.state.fileInput}/>
+            <Row className="justify-content-center">
+            <Col className="col-auto">
             <label className="custom-file-label" htmlFor="fileInput">
               Submit BED, GFF/GTF, or TXT files containing genomic coordinates.
             </label>
+            </Col>
+            <Col className="col-auto">
+            <input id="fileInput" type="file" className="custom-file-input"
+                   ref={this.state.fileInput}/>
+            </Col>
+            </Row>
           </div>
-          <Row className="justify-content-md-center">
+          <Row className="justify-content-center">
+            <Col className="col-auto">
             <Button 
               style={{marginTop: "1em"}}
               variant="primary" onClick={this.onFormSubmit}>
               Submit query
             </Button>
+            </Col>
           </Row>
         </Card>
       </Container>

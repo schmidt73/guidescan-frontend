@@ -1,10 +1,10 @@
 import React from 'react';
 import * as R from 'ramda';
 
-import {ItemSelectorInput, TextInput} from 'queryForm';
+import {ItemSelectorInput, TextInput} from './queryForm';
 
-import {getInfoSupported} from 'jobs/rest';
-import {immutableSetState} from 'utils';
+import {getInfoSupported} from './jobs/rest';
+import {immutableSetState} from './utils';
 
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -132,12 +132,14 @@ class GrnaQueryForm extends React.Component {
             }
             onTextChange={this.handleQueryTextChange}
             text={this.state.query_text}/>
-          <Row className="justify-content-md-center">
+          <Row className="justify-content-center">
+            <Col className="col-auto">
             <Button 
               style={{marginTop: "1em"}}
               variant="primary" onClick={this.onFormSubmit}>
               Submit query
             </Button>
+            </Col>
           </Row>
         </Card>
       </Container>

@@ -10,8 +10,8 @@ import ModalBody from 'react-bootstrap/ModalBody';
 import ModalFooter from 'react-bootstrap/ModalFooter';
 import Button from 'react-bootstrap/Button';
 
-import {immutableSetState} from 'utils';
-import {getJobResults} from 'jobs/rest';
+import {immutableSetState} from '../utils';
+import {getJobResults} from './rest';
 
 function offTargetSummary(off_targets) {
   let summary = {};

@@ -4,7 +4,7 @@
 
 // Variables ===================================================================
 
-$web-font-path: "https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;700&display=swap" !default;
+$web-font-path: 'https://fonts.googleapis.com/css2?family=Open+Sans&display=swap' !default;
 @import url($web-font-path);
 
 // Navbar ======================================================================
@@ -28,7 +28,11 @@ $web-font-path: "https://fonts.googleapis.com/css2?family=News+Cycle:wght@400;70
 }
 
 .navbar {
-  font-size: 18px;
+  background-color: $gray-200;
+  padding-top: 1rem;
+  padding-left: 1rem;
+  margin-bottom: 2rem;
+  font-size: 13px;
   font-family: $headings-font-family;
   font-weight: $headings-font-weight;
 }

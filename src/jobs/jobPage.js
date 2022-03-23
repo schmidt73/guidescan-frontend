@@ -1,7 +1,7 @@
-import {JobCompletedPage} from 'jobs/completedPage';
+import {JobCompletedPage} from './completedPage';
 
-import {immutableSetState} from 'utils';
-import {getJobStatus} from 'jobs/rest';
+import {immutableSetState} from '../utils';
+import {getJobStatus} from './rest';
 import {useLocation} from 'react-router-dom';
 
 import React from 'react';

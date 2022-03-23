@@ -1,4 +1,4 @@
-import {immutableSetState} from 'utils';
+import {immutableSetState} from '../utils';
 
 import React from 'react';
 import igv from 'igv';

@@ -1,9 +1,9 @@
 import * as R from 'ramda';
 
-import {JobResultsTable, GrnaJobResultsTable} from 'jobs/resultsTable';
-import {GenomeBrowser} from 'jobs/genomeBrowser';
+import {JobResultsTable, GrnaJobResultsTable} from './resultsTable';
+import {GenomeBrowser} from './genomeBrowser';
 
-import {immutableSetState} from 'utils';
+import {immutableSetState} from '../utils';
 
 import axios from 'axios';
 import { saveAs } from 'file-saver';

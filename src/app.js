@@ -2,7 +2,6 @@ import React from 'react';
 import * as R from 'ramda';
 
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Jumbotron from 'react-bootstrap/Jumbotron';
 import Toast from 'react-bootstrap/Toast';
 import Card from 'react-bootstrap/Card';
 import Container from 'react-bootstrap/Container';
@@ -14,30 +13,29 @@ import {QueryForm} from './queryForm.js';
 import {GrnaQueryForm} from './grnaQueryForm.js';
 import {LibraryQueryForm} from './libraryQueryForm.js';
 import {DownloadsPage} from './downloadsPage.js';
-import {AboutPage} from 'aboutPage';
-import {ContactPage} from 'contactPage';
-import {submitQuery, submitGrnaQuery, submitLibraryQuery} from 'jobs/rest';
-import {JobPage} from 'jobs/jobPage';
+import {AboutPage} from './aboutPage';
+import {ContactPage} from './contactPage';
+import {submitQuery, submitGrnaQuery, submitLibraryQuery} from './jobs/rest';
+import {JobPage} from './jobs/jobPage';
 
 import {
-  Switch,
+  Routes,
   Route,
-  Redirect,
+  Navigate,
   Link,
-  useRouteMatch,
-  withRouter
+  useMatch,
 } from 'react-router-dom';
 
 function ActiveBreadcrumbItem(props) {
-  const match = useRouteMatch({
+  const match = useMatch({
     path: props.path,
     exact: props.exact
   });
 
   const link = (
     !match
-      ? <Link className="breadcrumb-item" to={props.path}>{props.label}</Link>
-      : <span className='breadcrumb-item active'>{props.label}</span>
+      ? <Breadcrumb.Item href={props.path}>{props.label}</Breadcrumb.Item>
+      : <Breadcrumb.Item active>{props.label}</Breadcrumb.Item>
   );
 
   return link;
@@ -69,7 +67,7 @@ function CitationBox() {
 
 function NavigationBar() {
   return (
-    <Breadcrumb>
+    <Breadcrumb class="navbar">
       <ActiveBreadcrumbItem path="/" exact={true} label="gRNA Design" />
       <ActiveBreadcrumbItem path="/library" exact={true} label="Gene-targeting Library" />
       <ActiveBreadcrumbItem path="/grna" label="gRNA Sequence Search" />
@@ -85,7 +83,7 @@ function GuidescanLogo(props) {
     <a href="/">
       <img src="/img/logo.png"
            height={props.height}
-           objectFit="contain"
+           objectfit="contain"
            alt="logo"/>
     </a>
   );
@@ -203,7 +201,7 @@ class App extends React.Component {
     let pageSelector = null;
     if (this.state.query.state === QueryState.SUCCESS) {
       const jobId = this.state.query.response.data["job-id"];
-      pageSelector = <Redirect to={"/job/" + jobId}/>;
+      pageSelector = <Navigate to={"/job/" + jobId}/>;
     }
 
     return (
@@ -211,30 +209,15 @@ class App extends React.Component {
         <NavigationBar/>
         <GuidescanJumbotron/>
         {pageSelector}
-        <Switch>
-          <Route exact path="/">
-            <QueryForm handleSubmit={submitCallback}/>
-          </Route>
-          <Route exact path="/library">
-            <LibraryQueryForm handleSubmit={librarySubmitCallback}/>
-          </Route>
-          <Route exact path="/grna">
-            <GrnaQueryForm handleSubmit={grnaSubmitCallback}/>
-          </Route>
-          <Route exact path="/about">
-            <AboutPage/>
-            <CitationBox/>
-          </Route>
-          <Route exact path="/contact">
-            <ContactPage/>
-          </Route>
-          <Route exact path="/downloads">
-            <DownloadsPage/>
-          </Route>
-          <Route exact path='/job/:id'
-                 render={({match}) => (<JobPage id={match.params.id}/>)}>
-          </Route>
-        </Switch>
+        <Routes>
+          <Route exact path="/" element={<QueryForm handleSubmit={submitCallback}/>}/>
+          <Route exact path="/library" element={<LibraryQueryForm handleSubmit={librarySubmitCallback}/>}/>
+          <Route exact path="/grna" element={<GrnaQueryForm handleSubmit={grnaSubmitCallback}/>}/>
+          <Route exact path="/about" element={<React.Fragment><AboutPage/><CitationBox/></React.Fragment>}/>
+          <Route exact path="/contact" element={<ContactPage/>}/>
+          <Route exact path="/downloads" element={<DownloadsPage/>}/>
+          <Route exact path='/job/:id' render={({match}) => (<JobPage id={match.params.id}/>)}/>
+        </Routes>
         {successToast}
         {failureToast}
       </div>
@@ -242,4 +225,4 @@ class App extends React.Component {
   }
 }
 
-export default withRouter(App);
+export default App;
