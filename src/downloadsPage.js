@@ -32,6 +32,8 @@ function DownloadsPage() {
       we provide the raw Guidescan2 databases produced by our tool for several organism-enzyme
       combinations in a compressed BAM format. The exact details of the format are described in the software
       manual.<br/><br/>
+             The indices can be browsed at <a href="/indices">/indices</a> and <a href="/databases">/databases</a>. We also put them
+             in the following tables for your convenience.<br/><br/>
       <h4 style={{textAlign: "center"}}>Guidescan2 Indices:</h4>
       <br/>
       <table class="table">
@@ -50,49 +52,49 @@ function DownloadsPage() {
       <td>Fruit Fly</td>
       <td>dm6</td>
       <td>GCF_000001215.4</td>
-      <td></td>
+      <td><a href="/indices/dm6.zip">dm6</a></td>
       </tr>
       <tr>
       <th scope="row">2</th>
       <td>Human</td>
       <td>hg38</td>
       <td>GCF_000001405.39</td>
-      <td></td>
+      <td><a href="/indices/hg38.zip">hg38</a></td>
       </tr>
       <tr>
       <th scope="row">3</th>
       <td>House Mouse</td>
       <td>mm10</td>
       <td>GCF_000001635.26</td>
-      <td></td>
+      <td><a href="/indices/mm10.zip">mm10</a></td>
       </tr>
       <tr>
       <th scope="row">4</th>
       <td>House Mouse</td>
       <td>mm39</td>
       <td>GCF_000001635.27</td>
-      <td></td>
+      <td><a href="/indices/mm39.zip">mm39</a></td>
       </tr>
       <tr>
       <th scope="row">5</th>
       <td>Baker's Yeast</td>
       <td>sacCer3</td>
       <td>GCF_000146045.2</td>
-      <td></td>
+      <td><a href="/indices/sacCer3.zip">sacCer3</a></td>
       </tr>
       <tr>
       <th scope="row">6</th>
       <td>Norway Rat</td>
       <td>rn6</td>
       <td>GCF_015227675.2</td>
-      <td></td>
+      <td><a href="/indices/rn6.zip">rn6</a></td>
       </tr>
       <tr>
       <th scope="row">7</th>
       <td>Nematode</td>
       <td>ce11</td>
       <td>GCF_000002985.6</td>
-      <td></td>
+      <td><a href="/indices/ce11.zip">ce11</a></td>
       </tr>
       </tbody>
       </table>
@@ -117,7 +119,7 @@ function DownloadsPage() {
       <td>dm6</td>
       <td>cas9</td>
       <td>GCF_000001215.4</td>
-      <td></td>
+      <td><a href="/databases/cas9/dm6.bam.sorted">dm6</a></td>
       </tr>
       <tr>
       <th scope="row">2</th>
@@ -125,7 +127,7 @@ function DownloadsPage() {
       <td>hg38</td>
       <td>cpf1</td>
       <td>GCF_000001405.39</td>
-      <td></td>
+      <td><a href="/databases/cpf1/hg38.bam.sorted">hg38</a></td>
       </tr>
       <tr>
       <th scope="row">3</th>
@@ -133,7 +135,7 @@ function DownloadsPage() {
       <td>hg38</td>
       <td>cas9</td>
       <td>GCF_000001405.39</td>
-      <td></td>
+      <td><a href="/databases/cas9/hg38.bam.sorted">hg38</a></td>
       </tr>
       <tr>
       <th scope="row">4</th>
@@ -141,7 +143,7 @@ function DownloadsPage() {
       <td>mm10</td>
       <td>cpf1</td>
       <td>GCF_000001635.26</td>
-      <td></td>
+      <td><a href="/databases/cpf1/mm10.bam.sorted">mm10</a></td>
       </tr>
       <tr>
       <th scope="row">5</th>
@@ -149,7 +151,7 @@ function DownloadsPage() {
       <td>mm10</td>
       <td>cas9</td>
       <td>GCF_000001635.26</td>
-      <td></td>
+      <td><a href="/databases/cas9/mm10.bam.sorted">mm10</a></td>
       </tr>
       <tr>
       <th scope="row">6</th>
@@ -157,7 +159,7 @@ function DownloadsPage() {
       <td>mm39</td>
       <td>cas9</td>
       <td>GCF_000001635.27</td>
-      <td></td>
+      <td><a href="/databases/cas9/mm39.bam.sorted">mm39</a></td>
       </tr>
       <tr>
       <th scope="row">7</th>
@@ -165,7 +167,7 @@ function DownloadsPage() {
       <td>sacCer3</td>
       <td>cas9</td>
       <td>GCF_000146045.2</td>
-      <td></td>
+      <td><a href="/databases/cas9/sacCer3.bam.sorted">sacCer3</a></td>
       </tr>
       <tr>
       <th scope="row">8</th>
@@ -173,7 +175,7 @@ function DownloadsPage() {
       <td>rn6</td>
       <td>cas9</td>
       <td>GCF_015227675.2</td>
-      <td></td>
+      <td><a href="/databases/cas9/rn6.bam.sorted">rn6</a></td>
       </tr>
       <tr>
       <th scope="row">9</th>
@@ -181,7 +183,7 @@ function DownloadsPage() {
       <td>ce11</td>
       <td>cpf1</td>
       <td>GCF_000002985.6</td>
-      <td></td>
+      <td><a href="/databases/cpf1/ce11.bam.sorted">ce11</a></td>
       </tr>
       <tr>
       <th scope="row">10</th>
@@ -189,7 +191,7 @@ function DownloadsPage() {
       <td>ce11</td>
       <td>cas9</td>
       <td>GCF_000002985.6</td>
-      <td></td>
+      <td><a href="/databases/cas9/ce11.bam.sorted">ce11</a></td>
       </tr>
       </tbody>
       </table>
