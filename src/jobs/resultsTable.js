@@ -1,5 +1,5 @@
 import * as R from 'ramda';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from 'react-bootstrap-table-next';
 
@@ -44,10 +44,10 @@ function grnaQueryProcessGrna(gRNA) {
   }
 }
 
-function processgRNA(onCoordsChange, chr, gRNA) {
+function processgRNA(chr, gRNA) {
   const strand = (gRNA.direction === "positive") ? "+" : "-";
   const coords = chr + ":" + gRNA.start + "-" + gRNA.end + ":" + strand;
-  gRNA.coordinate = <a className="breadcrumb-item" onClick={() => onCoordsChange(coords)}>{coords}</a>;
+  gRNA.coordinate = <a className="breadcrumb-item">{coords}</a>;
 
   const offTargets = gRNA["off-targets"];
   const summary = offTargetSummary(offTargets);
@@ -72,17 +72,17 @@ function processgRNA(onCoordsChange, chr, gRNA) {
 
 }
 
-function processResultEntry(onCoordsChange, entry) {
+function processResultEntry(entry) {
   const chr = entry[0]['chromosome-name']; 
-  entry[1].forEach((gRNA) => processgRNA(onCoordsChange, chr, gRNA));
+  entry[1].forEach((gRNA) => processgRNA(chr, gRNA));
 }
 
 /*
   Processes the results of a /job/result/ request into a format
   suitable for a results table. Mutates the input.
 */
-function processJobResults(onCoordsChange, results) {
-  results.forEach((e) => processResultEntry(onCoordsChange, e));
+function processJobResults(results) {
+  results.forEach((e) => processResultEntry(e));
 }
 
 function floatFormatter(precision) {
@@ -256,130 +256,54 @@ const JobResultsState = {
   RECEIVED: 3,
 };
 
-class JobResultsTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.onLoadSuccess = this.onLoadSuccess.bind(this);
-    this.onLoadFailure = this.onLoadFailure.bind(this);
-
-    this.loadJobResults = (id) =>
-      getJobResults(this.onLoadSuccess,
-                    this.onLoadFailure,
-                    'json', id);
-
-    this.state = {
-      status: JobResultsState.PENDING
-    };
-  }
-
-  componentDidMount() {
-    this.loadSource = this.loadJobResults(this.props.id);
-  }
-
-  componentWillUnmount() {
-    this.loadSource.cancel();
-  }
-
-  onLoadSuccess(response) {
-    immutableSetState(this, {status: JobResultsState.RECEIVED,
-                             data: response.data});
-    this.props.onOrganismChange(this.state.data[0][0].organism);
-
-    const genomicRegion = this.state.data[0][0];
-    const defaultCoordsString = genomicRegion["chromosome-name"] + ":" + genomicRegion["coords"][1] + "-" + genomicRegion["coords"][2];
-    this.props.onCoordsChange(defaultCoordsString);
-  }
-
-  onLoadFailure(error) {
-    immutableSetState(this, {status: JobResultsState.ERROR});
-  }
-
-  render() {
+function JobResultsTable(props) {
     let page = null;
 
-    switch (this.state.status) {
+    switch (props.resultsState) {
     case JobResultsState.RECEIVED:
-      let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
-      console.log(gRNAs);
-      processJobResults(this.props.onCoordsChange, gRNAs);
-      page = gRNAs.map((queryResult) => {
-        const grnaCoordsString = queryResult[0]["region-name"];
-        return (
-          <React.Fragment key={queryResult[0]["region-name"]}>
-            <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}
-                onClick={() => this.props.onCoordsChange(grnaCoordsString)}>
-              <a className="breadcrumb-item" style={{color: "black"}}>
-                {grnaCoordsString}
-              </a>
-            </h4>
-            <BootstrapTable keyField='sequence' data={queryResult[1]}
-                            striped={true}
-                            columns={JobResultsTableColumns}
-                            pagination={paginationFactory()} />
-          </React.Fragment>
-        );
-      });
-      break;
+        let gRNAs = JSON.parse(JSON.stringify(props.results)); 
+        processJobResults(gRNAs);
+        page = gRNAs.map((queryResult) => {
+          const grnaCoordsString = queryResult[0]["region-name"];
+          return (
+            <React.Fragment key={queryResult[0]["region-name"]}>
+              <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>
+                <a className="breadcrumb-item" style={{color: "black"}}>
+                  {grnaCoordsString}
+                </a>
+              </h4>
+              <BootstrapTable keyField='sequence' data={queryResult[1]}
+                              striped={true}
+                              columns={JobResultsTableColumns}
+                              pagination={paginationFactory()} />
+            </React.Fragment>
+          );
+        });
+        break;
     case JobResultsState.ERROR:
-      page = (
-        <div className="alert alert-danger">
-          Error loading results.
-        </div>
-      );
-      break;
+        page = (
+                <div className="alert alert-danger">
+                Error loading results.
+                </div>
+               );
+        break;
     default:
-      page = (
-        <div className="alert alert-warning">
-          {"Job Results are currently pending..."}
-        </div>
-      );
+        page = (
+                <div className="alert alert-warning">
+                {"Job Results are currently pending..."}
+                </div>
+               );
     }
 
     return page;
-  }
 }
 
-class GrnaJobResultsTable extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.onLoadSuccess = this.onLoadSuccess.bind(this);
-    this.onLoadFailure = this.onLoadFailure.bind(this);
-
-    this.loadJobResults = (id) =>
-      getJobResults(this.onLoadSuccess,
-                    this.onLoadFailure,
-                    'json', id);
-
-    this.state = {
-      status: JobResultsState.PENDING
-    };
-  }
-
-  componentDidMount() {
-    this.loadSource = this.loadJobResults(this.props.id);
-  }
-
-  componentWillUnmount() {
-    this.loadSource.cancel();
-  }
-
-  onLoadSuccess(response) {
-    immutableSetState(this, {status: JobResultsState.RECEIVED,
-                             data: response.data});
-  }
-
-  onLoadFailure(error) {
-    immutableSetState(this, {status: JobResultsState.ERROR});
-  }
-
-  render() {
+function GrnaJobResultsTable(props) {
     let page = null;
 
-    switch (this.state.status) {
+    switch (props.resultsState) {
     case JobResultsState.RECEIVED:
-      let gRNAs = JSON.parse(JSON.stringify(this.state.data)); // Works because data comes from JSON endpoint
+      let gRNAs = JSON.parse(JSON.stringify(props.results)); // Works because data comes from JSON endpoint
       let goodGrnas = [], badGrnas = [];
       for(const gRNA of gRNAs) {
         if (gRNA.error) {
@@ -417,24 +341,23 @@ class GrnaJobResultsTable extends React.Component {
         </>
       );
 
-      break;
+        break;
     case JobResultsState.ERROR:
-      page = (
-        <div className="alert alert-danger">
-          Error loading results.
-        </div>
-      );
-      break;
+        page = (
+                <div className="alert alert-danger">
+                Error loading results.
+                </div>
+               );
+        break;
     default:
-      page = (
-        <div className="alert alert-warning">
-          {"Job Results are currently pending..."}
-        </div>
-      );
+        page = (
+                <div className="alert alert-warning">
+                {"Job Results are currently pending..."}
+                </div>
+               );
     }
 
     return page;
-  }
 }
 
 export {JobResultsTable, GrnaJobResultsTable};

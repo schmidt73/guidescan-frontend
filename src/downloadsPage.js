@@ -34,9 +34,10 @@ function DownloadsPage() {
       manual.<br/><br/>
              The indices can be browsed at <a href="/indices">/indices</a> and <a href="/databases">/databases</a>. We also put them
              in the following tables for your convenience.<br/><br/>
+        </p>
       <h4 style={{textAlign: "center"}}>Guidescan2 Indices:</h4>
       <br/>
-      <table class="table">
+      <table className="table">
       <thead>
       <tr>
       <th scope="col">#</th>
@@ -101,7 +102,7 @@ function DownloadsPage() {
       <br/>
       <h4 style={{textAlign: "center"}}>Guidescan2 Databases:</h4>
       <br/>
-      <table class="table">
+      <table className="table">
       <thead>
       <tr>
       <th scope="col">#</th>
@@ -195,7 +196,6 @@ function DownloadsPage() {
       </tr>
       </tbody>
       </table>
-    </p>
       </Col>
       </Row>
     </Card>

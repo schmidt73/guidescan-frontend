@@ -18,7 +18,7 @@ const JobStatus = {
 
 const UPDATE_INTERVAL = 1000;
 
-function JobPage() {
+function JobPage(props) {
     const { id } = useParams();
     const [job_status, setJobStatus] = useState(JobStatus.UNKNOWN);
     const [job_type, setJobType] = useState(null);
@@ -45,7 +45,7 @@ function JobPage() {
         }
 
         getJobStatus(onJobStatusSuccess, onJobStatusError, id);
-    }); 
+    }, [id]); 
 
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});

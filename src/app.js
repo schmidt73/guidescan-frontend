@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import * as R from 'ramda';
 
 import Breadcrumb from 'react-bootstrap/Breadcrumb';
@@ -16,7 +16,7 @@ import {DownloadsPage} from './downloadsPage.js';
 import {AboutPage} from './aboutPage';
 import {ContactPage} from './contactPage';
 import {submitQuery, submitGrnaQuery, submitLibraryQuery} from './jobs/rest';
-import {JobPage2} from './jobs/jobPage';
+import {JobPage} from './jobs/jobPage';
 
 import {
   Routes,
@@ -24,6 +24,7 @@ import {
   Navigate,
   Link,
   useMatch,
+  useNavigate,
 } from 'react-router-dom';
 
 function ActiveBreadcrumbItem(props) {
@@ -146,69 +147,44 @@ const QueryState = {
   FAILURE: 3,
 };
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    
-    this.handleSuccessfulQuery = this.handleSuccessfulQuery.bind(this);
-    this.handleFailedQuery     = this.handleFailedQuery.bind(this);
+function App() {
+    const [queryState, updateQueryState] = useState(QueryState.NOT_SUBMITTED);
+    const navigate = useNavigate();
 
-    this.state = {
-      query: {
-        state: QueryState.NOT_SUBMITTED,
-      }
-    };
-  }
+    function handleSuccessfulQuery(response) {
+        updateQueryState(QueryState.SUCCESS);
+        navigate('/job/' + response.data["job-id"]);
+    }
 
-  handleSuccessfulQuery(response) {
-    const query = {state: QueryState.SUCCESS, response: response};
-    this.setState({query: query});
-  }
+    function handleFailedQuery(error) {
+        updateQueryState(QueryState.FAILURE);
+    }
 
-  handleFailedQuery(error) {
-    const query = {state: QueryState.FAILURE, error: error};
-    this.setState({query: query});
-  }
-
-  render() {
     const submitCallback = (queryState) =>
-          submitQuery(this.handleSuccessfulQuery,
-                      this.handleFailedQuery,
-                      queryState);
+        submitQuery(handleSuccessfulQuery, handleFailedQuery, queryState);
 
-    const grnaSubmitCallback = (queryState) =>
-          submitGrnaQuery(this.handleSuccessfulQuery,
-                          this.handleFailedQuery,
-                          queryState);
+    const grnaSubmitCallback = (queryState) => 
+        submitGrnaQuery(handleSuccessfulQuery, handleFailedQuery, queryState);
 
-    const librarySubmitCallback = (queryState) =>
-          submitLibraryQuery(this.handleSuccessfulQuery,
-                             this.handleFailedQuery,
-                             queryState);
+    const librarySubmitCallback = (queryState) => 
+        submitLibraryQuery(handleSuccessfulQuery, handleFailedQuery, queryState);
 
     let successToast = (
       <QuitableToast
-        show={this.state.query.state === QueryState.SUCCESS}
+        show={queryState === QueryState.SUCCESS}
         text="Successfully submitted query."/>
     );
 
     let failureToast = (
       <QuitableToast
-        show={this.state.query.state === QueryState.FAILURE}
+        show={queryState === QueryState.FAILURE}
         text="Failure to submit query."/>
     );
-
-    let pageSelector = null;
-    if (this.state.query.state === QueryState.SUCCESS) {
-      const jobId = this.state.query.response.data["job-id"];
-      pageSelector = <Navigate to={"/job/" + jobId}/>;
-    }
 
     return (
       <div className="App">
         <NavigationBar/>
         <GuidescanJumbotron/>
-        {pageSelector}
         <Routes>
           <Route exact path="/" element={<QueryForm handleSubmit={submitCallback}/>}/>
           <Route exact path="/library" element={<LibraryQueryForm handleSubmit={librarySubmitCallback}/>}/>
@@ -222,7 +198,6 @@ class App extends React.Component {
         {failureToast}
       </div>
     );
-  }
 }
 
 export default App;

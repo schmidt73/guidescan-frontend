@@ -8,13 +8,11 @@ class GenomeBrowser extends React.Component {
     super(props);
 
     this.igvDiv = React.createRef();
-    this.state = {browser: null, browserState: {organism: null, coords: null}};
     this.getOptions = this.getOptions.bind(this);
   }
 
   getOptions() {
     const genome = this.props.organism;
-    console.log(genome);
 
     const options = {
       genome: genome,
@@ -32,25 +30,13 @@ class GenomeBrowser extends React.Component {
 
   componentDidMount() {
     igv.createBrowser(this.igvDiv.current, this.getOptions()).then((b) => {
-        if(!this._ismounted) return;
-        this.setState({browser: b});
-        this.state.browser.search(this.props.coords);
+        b.search(this.props.coords);
     });
-
-    this._ismounted = true;
-  }
-
-  componentWillUnmount() {
-    this._ismounted = false;
   }
 
   render() {
-    if (this.state.browser) this.state.browser.search(this.props.coords);
-
     return <div ref={this.igvDiv}/>;
   }
-
-
 }
 
 export {GenomeBrowser};

@@ -8,7 +8,9 @@ import {immutableSetState} from '../utils';
 import axios from 'axios';
 import { saveAs } from 'file-saver';
 
-import React from 'react';
+import {getJobResults} from './rest';
+import {useParams} from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
 
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -21,36 +23,45 @@ function downloadResults(id, format, extension) {
   saveAs(`/backend/job/result/${format}/${id}`, `results.${extension}`)
 }
 
-class JobCompletedPage extends React.Component {
-  constructor(props) {
-    super(props);
+const JobResultsState = {
+  PENDING:  1,
+  ERROR:    2,
+  RECEIVED: 3,
+};
 
-    this.state = {
-      showResults: false,
-      organism: null,
-      coords: null,
-    };
+function JobCompletedPage(props) {
+    const [show_results, updateShowResults] = useState(false);
+    const [organism, updateOrganism] = useState(null);
+    const [coords, updateCoords] = useState(null);
+    const [results_state, updateResultsState] = useState(JobResultsState.PENDING);
+    const [results, updateResults] = useState(null);
 
-    this.handleCoordsChange = this.handleCoordsChange.bind(this);
-    this.handleOrganismChange = this.handleOrganismChange.bind(this);
-  }
+    useEffect(() => {
+        function onLoadSuccess(response) {
+            updateResults(response.data);
+            updateResultsState(JobResultsState.RECEIVED);
 
-  handleCoordsChange(c) {
-    immutableSetState(this, {coords: c});
-  }
+            updateOrganism(response.data[0][0].organism);
 
-  handleOrganismChange(o) {
-    immutableSetState(this, {organism: o});
-  }
+            const genomicRegion = response.data[0][0];
+            const defaultCoordsString = genomicRegion["chromosome-name"] + ":" + genomicRegion["coords"][1] + "-" + genomicRegion["coords"][2];
+            updateCoords(defaultCoordsString);
+        }
 
-  render() {
+        function onLoadFailure(response) {
+            updateResultsState(JobResultsState.ERROR);
+        }
+        
+        getJobResults(onLoadSuccess, onLoadFailure, 'json', props.id);
+    }, [props.id]);
+
     const center_style = {textAlign: "center"};
 
     const showResultsButton = (
       <Button 
         style={{margin: "1em"}}
-        variant="primary" onClick={() => immutableSetState(this, {showResults: !(this.state.showResults)})}>
-        {this.state.showResults ? "Show results" : "Hide results"}
+        variant="primary" onClick={() => updateShowResults(!show_results)}>
+        {show_results ? "Show results" : "Hide results"}
       </Button>
     );
 
@@ -58,44 +69,40 @@ class JobCompletedPage extends React.Component {
       <DropdownButton
         style={{margin: "1em"}}
         id="dropdown-basic-button" title="Download results" download>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "json", "json")}>
+        <Dropdown.Item onClick={() => downloadResults(props.id, "json", "json")}>
           as json...
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "csv", "csv")}>
+        <Dropdown.Item onClick={() => downloadResults(props.id, "csv", "csv")}>
           as csv...
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "excel", "xlsx")}>
+        <Dropdown.Item onClick={() => downloadResults(props.id, "excel", "xlsx")}>
           as excel...
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => downloadResults(this.props.id, "bed", "bed")}>
+        <Dropdown.Item onClick={() => downloadResults(props.id, "bed", "bed")}>
           as bed...
         </Dropdown.Item>
       </DropdownButton>
     );
 
-    let results =  null;
+    let rendering =  null;
 
-    if (!this.state.showResults) {
-      if (this.props.jobType === "grna") {
-        results = (
-          <GrnaJobResultsTable id={this.props.id}/>
+    if (!show_results) {
+      if (props.jobType === "grna") {
+        rendering = (
+          <GrnaJobResultsTable id={props.id} resultsState={results_state} results={results}/>
         );
-      } else if (this.props.jobType === "library") {
-        results = null;
+      } else if (props.jobType === "library") {
+        rendering = null;
       } else {
-        results = (
+        rendering = (
           <>
             {
-              (this.state.organism && this.state.coords) ? (
-                <GenomeBrowser id={this.props.id}
-                               organism={this.state.organism}
-                               coords={this.state.coords}/>
+              (organism && coords) ? (
+                <GenomeBrowser id={props.id} organism={organism} coords={coords}/>
               ) : null
             }
             <hr/> 
-            <JobResultsTable id={this.props.id}
-                             onCoordsChange={this.handleCoordsChange}
-                             onOrganismChange={this.handleOrganismChange}/>
+            <JobResultsTable id={props.id} resultsState={results_state} results={results}/>
           </>
         );
       }
@@ -105,17 +112,16 @@ class JobCompletedPage extends React.Component {
       <Container>
         <h2 style={center_style}>Job Results</h2>
         <Row className="justify-content-md-center">
-          <Col className="col-sm-auto">{(this.props.jobType === "library") ? null : showResultsButton}</Col>
+          <Col className="col-sm-auto">{(props.jobType === "library") ? null : showResultsButton}</Col>
           <Col className="col-sm-auto">{downloadResultsButton}</Col>
         </Row>
-        {(results ? (
+        {(rendering ? (
           <>
             <hr/>
-            {results}
+            {rendering}
           </>) : null)}
       </Container>
     );
   }
-}
 
 export {JobCompletedPage};
