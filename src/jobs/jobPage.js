@@ -31,8 +31,8 @@ function JobPage(props) {
         if (jstatus === "pending") {
             setJobStatus(JobStatus.PENDING);
         } else if (jstatus === "completed") {
-            setJobStatus(JobStatus.COMPLETED); 
             setJobType(jtype);
+            setJobStatus(JobStatus.COMPLETED); 
         } else if (jstatus === "failed") {
             setFailureMessage(response.data["failure"]);
             setJobStatus(JobStatus.FAILED);
