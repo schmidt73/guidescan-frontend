@@ -86,7 +86,7 @@ function JobPage(props) {
           <hr/>
           <div className="alert alert-danger">
             {
-              job_err_msg.split('\n').map(
+              failure_msg.split('\n').map(
                 (item, key) => <React.Fragment key={key}>{item}<br/></React.Fragment>
               )
             }
