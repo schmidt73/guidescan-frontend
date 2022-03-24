@@ -41,11 +41,12 @@ function JobCompletedPage(props) {
             updateResults(response.data);
             updateResultsState(JobResultsState.RECEIVED);
 
-            updateOrganism(response.data[0][0].organism);
-
-            const genomicRegion = response.data[0][0];
-            const defaultCoordsString = genomicRegion["chromosome-name"] + ":" + genomicRegion["coords"][1] + "-" + genomicRegion["coords"][2];
-            updateCoords(defaultCoordsString);
+            if (props.jobType === "standard") {
+                updateOrganism(response.data[0][0].organism);
+                const genomicRegion = response.data[0][0];
+                const defaultCoordsString = genomicRegion["chromosome-name"] + ":" + genomicRegion["coords"][1] + "-" + genomicRegion["coords"][2];
+                updateCoords(defaultCoordsString);
+            }
         }
 
         function onLoadFailure(response) {

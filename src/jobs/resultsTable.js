@@ -303,43 +303,42 @@ function GrnaJobResultsTable(props) {
 
     switch (props.resultsState) {
     case JobResultsState.RECEIVED:
-      let gRNAs = JSON.parse(JSON.stringify(props.results)); // Works because data comes from JSON endpoint
-      let goodGrnas = [], badGrnas = [];
-      for(const gRNA of gRNAs) {
-        if (gRNA.error) {
-          gRNA.error = gRNA.error.message;
-          gRNA.sequence = gRNA.grna;
-          badGrnas.push(gRNA);
-        } else { 
-          grnaQueryProcessGrna(gRNA);
-          goodGrnas.push(gRNA);
+        let gRNAs = JSON.parse(JSON.stringify(props.results)); // Works because data comes from JSON endpoint
+        let goodGrnas = [], badGrnas = [];
+        for(const gRNA of gRNAs) {
+            if (gRNA.error) {
+                gRNA.error = gRNA.error.message;
+                gRNA.sequence = gRNA.grna;
+                badGrnas.push(gRNA);
+            } else { 
+                grnaQueryProcessGrna(gRNA);
+                goodGrnas.push(gRNA);
+            }
         }
-      }
 
-      page = (
-        <>
-          <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>
-            <a className="breadcrumb-item" style={{color: "black"}}>
-              Evaluated gRNAs
-            </a>
-          </h4>
-          <BootstrapTable keyField='sequence' data={goodGrnas}
-                          striped={true}
-                          columns={GrnaJobResultsTableColumns}/>
-          {((badGrnas.length > 0) ? (
-            <>
-              <h4 style={{margin: "1.5em 0 1em 0.5em", fontStyle: "italic"}}>
+        page = (
+                <>
+                <h4 style={{margin: "0.5em 0 1em 0.5em", fontStyle: "italic"}}>
                 <a className="breadcrumb-item" style={{color: "black"}}>
-                  Failed gRNAs
+                Evaluated gRNAs
                 </a>
-              </h4>
-              <BootstrapTable keyField='sequence' data={badGrnas}
-                              striped={true}
-                              columns={BadGrnaJobResultsTableColumns}/>
-            </>
-          ) : null)}
-        </>
-      );
+                </h4>
+                <BootstrapTable keyField='sequence' data={goodGrnas}
+                striped={true}
+                columns={GrnaJobResultsTableColumns}/>
+                {((badGrnas.length > 0) ? (
+                            <>
+                            <h4 style={{margin: "1.5em 0 1em 0.5em", fontStyle: "italic"}}>
+                            <a className="breadcrumb-item" style={{color: "black"}}>
+                            Failed gRNAs
+                            </a>
+                            </h4>
+                            <BootstrapTable keyField='sequence' data={badGrnas}
+                            striped={true}
+                            columns={BadGrnaJobResultsTableColumns}/>
+                            </>
+                            ) : null)}
+        </>);
 
         break;
     case JobResultsState.ERROR:
@@ -355,6 +354,7 @@ function GrnaJobResultsTable(props) {
                 {"Job Results are currently pending..."}
                 </div>
                );
+        break;
     }
 
     return page;
