@@ -45,8 +45,8 @@ function ActiveBreadcrumbItem(props) {
 function CitationBox() {
   const box_style = {padding: "2em 2em 1em 2em", margin: "2em 0 2em 0"};
   return (
-    <Container id="citation-box">
-      <Card style={box_style}>
+    <Container>
+      <Card id="citationbox">
         <h4>Citation</h4>
         <hr/>
         <p style={{fontSize: "1.15em"}}>
@@ -95,7 +95,7 @@ function GuidescanJumbotron() {
   const margin_style = (m) => ({margin: m});
   return (
     <Container>
-      <Card style={R.mergeRight(padding_style("2em"), margin_style("0 0 2.5em 0"))} className="bg-light">
+      <Card id="jumbotron" className="bg-light">
         <Row>
           <Col >
             <GuidescanLogo height={55}/>

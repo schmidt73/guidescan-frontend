@@ -24,28 +24,29 @@ function JobPage(props) {
     const [job_type, setJobType] = useState(null);
     const [failure_msg, setFailureMessage] = useState(null);
 
-    useEffect(() => {
-        function onJobStatusSuccess(response) {
-            const jstatus = response.data["job-status"];
-            const jtype = response.data["result-type"];
+    function onJobStatusSuccess(response) {
+        const jstatus = response.data["job-status"];
+        const jtype = response.data["result-type"];
 
-            if (jstatus === "pending") {
-                setJobStatus(JobStatus.PENDING);
-            } else if (jstatus === "completed") {
-                setJobStatus(JobStatus.COMPLETED); 
-                setJobType(jtype);
-            } else if (jstatus === "failed") {
-                setFailureMessage(response.data["failure"]);
-                setJobStatus(JobStatus.FAILED);
-            } 
-        }
+        if (jstatus === "pending") {
+            setJobStatus(JobStatus.PENDING);
+        } else if (jstatus === "completed") {
+            setJobStatus(JobStatus.COMPLETED); 
+            setJobType(jtype);
+        } else if (jstatus === "failed") {
+            setFailureMessage(response.data["failure"]);
+            setJobStatus(JobStatus.FAILED);
+        } 
+    }
 
-        function onJobStatusError(response) {
-            setJobStatus(JobStatus.UNKNOWN);
-        }
+    function onJobStatusError(response) {
+        setJobStatus(JobStatus.UNKNOWN);
+    }
 
-        getJobStatus(onJobStatusSuccess, onJobStatusError, id);
-    }, [id]); 
+    const update = () => getJobStatus(onJobStatusSuccess, onJobStatusError, id);
+
+    useEffect(() => { update(); }, [id]); // force initial update
+    setInterval(update, UPDATE_INTERVAL);
 
     const center_style = {textAlign: "center"};
     const padding_style = (p) => ({padding: p});

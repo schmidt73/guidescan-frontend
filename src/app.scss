@@ -4,10 +4,25 @@ html {
 
 .card {
   border-radius: 0 !important;
+  max-width: 80%;
+  margin: 0 auto; /* Added */
+  float: none;
 }
 
-.jumbotron {
-  border-radius: 0 !important;
+#jumbotron {
+  margin-top: 30px;
+  margin-bottom: 40px;
+  padding-top: 20px;
+  padding-left: 10px;
+  padding-bottom: 20px;
+}
+
+#citationbox {
+  padding-bottom: 10px; 
+  padding-top: 10px; 
+  padding-left: 10px;
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css");
