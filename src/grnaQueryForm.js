@@ -127,7 +127,7 @@ class GrnaQueryForm extends React.Component {
           <TextInput
             display={
               <h5 style={{padding: "1em 0 0.5em 0"}}>
-                Input gRNAs of length 10-30nt to search against in the Guidescan database.
+                Input gRNAs of length 23nt to search against in the Guidescan2 database.
               </h5>
             }
             onTextChange={this.handleQueryTextChange}

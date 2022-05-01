@@ -348,22 +348,27 @@ class QueryForm extends React.Component {
   }
 
   handleOrganismSelectionChange(t) {
+    const query_text = this.state.examples["coords"][t][this.state.enzyme];
+
     immutableSetState(
       this, {
         organism: t,
-        query_text: this.state.examples["coords"][t][this.state.enzyme]
+        query_text: query_text
     });
 
+    localStorage.setItem('query_text', query_text);
     localStorage.setItem('organism', t);
   }
 
   handleEnzymeSelectionChange(t) {
+    const query_text = this.state.examples["coords"][this.state.organism][t];
     immutableSetState(
       this, {
         enzyme: t,
-        query_text: this.state.examples["coords"][this.state.organism][t]
+        query_text: query_text
     });
 
+    localStorage.setItem('query_text', query_text);
     localStorage.setItem('enzyme', t);
   }
 
