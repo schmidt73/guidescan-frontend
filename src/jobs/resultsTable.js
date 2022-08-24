@@ -13,8 +13,8 @@ import Button from 'react-bootstrap/Button';
 import {immutableSetState} from '../utils';
 import {getJobResults} from './rest';
 
-function offTargetSummary(off_targets) {
-  let summary = {};
+function offTargetSummaryOld(off_targets) {
+  let summary = {0: 1, 1: 0, 2:0, 3:0};
   if (!off_targets) return summary;
   off_targets.forEach((off_target) => (off_target.distance in summary)
                       ? summary[off_target.distance]++
@@ -22,6 +22,37 @@ function offTargetSummary(off_targets) {
   return summary;
 }
 
+function offTargetSummary(gRNA) {
+    if (!("distance-0-off-targets" in gRNA)) {
+        return offTargetSummaryOld(gRNA["off-targets"])
+    }
+
+    return {
+        0: gRNA["distance-0-off-targets"],
+        1: gRNA["distance-1-off-targets"],
+        2: gRNA["distance-2-off-targets"],
+        3: gRNA["distance-3-off-targets"],
+        4: gRNA["distance-4-off-targets"],
+    }
+}
+
+function offTargetSummaryString(gRNA) {
+    const summary = offTargetSummary(gRNA);
+    let first_flag = true;
+    let offtargetstring = "";
+    for (let k = 2; k < 6; k++) {
+        if (!(k in summary)) continue;
+        if (!first_flag) {
+            offtargetstring += "|";
+        }
+
+        offtargetstring += k + ":" + (summary[k] || 0)
+        first_flag = false;
+    }
+
+    return offtargetstring;
+}
+    
 
 function grnaQueryProcessGrna(gRNA) {
   const strand = (gRNA.direction === "positive") ? "+" : "-";
@@ -30,10 +61,9 @@ function grnaQueryProcessGrna(gRNA) {
   gRNA.coordinate = coords;
 
   const offTargets = gRNA["off-targets"];
-  const summary = offTargetSummary(offTargets);
-  gRNA["num-off-targets"] = offTargets ? offTargets.length : 0;
-  gRNA["off-target-summary"] = "2:" + (summary[2] || 0) +
-    " | 3:" + (summary[3] || 0);
+  const summary = offTargetSummary(gRNA);
+  gRNA["num-off-targets"] = R.sum(R.values(summary)) - 1;
+  gRNA["off-target-summary"] = offTargetSummaryString(gRNA);
 
   if (!("specificity" in gRNA)) {
     gRNA["specificity"] = "N/A";
@@ -50,10 +80,9 @@ function processgRNA(chr, gRNA) {
   gRNA.coordinate = <a className="breadcrumb-item">{coords}</a>;
 
   const offTargets = gRNA["off-targets"];
-  const summary = offTargetSummary(offTargets);
-  gRNA["num-off-targets"] = offTargets ? offTargets.length : 0;
-  gRNA["off-target-summary"] = "2:" + (summary[2] || 0) +
-    " | 3:" + (summary[3] || 0);
+  const summary = offTargetSummary(gRNA);
+  gRNA["num-off-targets"] = R.sum(R.values(summary)) - 1;
+  gRNA["off-target-summary"] = offTargetSummaryString(gRNA);
 
   if (gRNA["annotations"].length > 0) {
     let annotation = gRNA["annotations"][0];
@@ -132,8 +161,9 @@ function OffTargetModal(props) {
   const handleShow = () => setShow(true);
 
   var offTargets = props.gRNA["off-targets"] || [];
-  offTargets = offTargets.map(off_target => {
+  offTargets = offTargets.map((off_target, index) => {
     return {
+      id: index,
       distance: off_target.distance,
       coords: {
         position: off_target.position,
@@ -143,16 +173,16 @@ function OffTargetModal(props) {
     }
   });
 
-  const offTargetSummary = props.gRNA["off-target-summary"];
+  const summary = props.gRNA["off-target-summary"];
 
   if (offTargets.length == 0) {
-    return offTargetSummary;
+    return summary;
   }
 
   return (
     <>
       <a href="#" variant="primary" onClick={(e) => {e.preventDefault(); handleShow();}}>
-        {offTargetSummary}
+        {summary}
       </a>
 
       <Modal show={show} onHide={handleClose} size='lg'>
@@ -160,7 +190,7 @@ function OffTargetModal(props) {
           <Modal.Title>Off-targets for guideRNA targeting {props.gRNA["coordinate"]}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <BootstrapTable keyField='coords' data={offTargets}
+          <BootstrapTable keyField='id' data={offTargets}
                           striped={true} columns={OffTargetResultsTableColumns}
                           pagination={paginationFactory()} />
         </Modal.Body>

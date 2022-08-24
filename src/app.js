@@ -50,16 +50,16 @@ function CitationBox() {
         <h4>Citation</h4>
         <hr/>
         <p style={{fontSize: "1.15em"}}>
-          Perez, A. R., Pritykin, Y., Vidigal, J. A.,
-          Chhangawala, S., Zamparo, L., Leslie, C. S., & Ventura,
-          A. (2017). <br/>
+          Henri Schmidt, Minsi Zhang, Haralambos Mourelatos, Francisco J Sanchez-Rivera, 
+          Scott W Lowe, Andrea Ventura, Christina S Leslie, Yuri Pritykin (2022).
+          <br/>
 
-          GuideScan software for improved single and paired
-          CRISPR guide RNA design. <br/>
+          Genome-wide CRISPR guide RNA design and specificity analysis with GuideScan2.
+          <br/>
 
           <i>
-            Nature biotechnology
-          </i>&#44; 35 (4), 347-349.  
+            bioRxiv
+          </i>&#44; https://doi.org/10.1101/2022.05.02.490368.  
         </p>
       </Card>
     </Container>
@@ -98,7 +98,7 @@ function GuidescanJumbotron() {
       <Card id="jumbotron" className="bg-light">
         <Row>
           <Col >
-            <GuidescanLogo height={55}/>
+            <GuidescanLogo height={106}/>
             <br/><br/>
             <h3>&nbsp;CRISPR guideRNA design and analysis</h3>
           </Col>
