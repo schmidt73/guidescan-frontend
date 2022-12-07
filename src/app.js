@@ -9,13 +9,14 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import './app.scss';
+import packageInfo from '../package.json';
 import {QueryForm} from './queryForm.js';
 import {GrnaQueryForm} from './grnaQueryForm.js';
 import {LibraryQueryForm} from './libraryQueryForm.js';
 import {DownloadsPage} from './downloadsPage.js';
 import {AboutPage} from './aboutPage';
 import {ContactPage} from './contactPage';
-import {submitQuery, submitGrnaQuery, submitLibraryQuery} from './jobs/rest';
+import {getInfoSupported, submitQuery, submitGrnaQuery, submitLibraryQuery} from './jobs/rest';
 import {JobPage} from './jobs/jobPage';
 
 import {
@@ -148,8 +149,13 @@ const QueryState = {
 };
 
 function App() {
+    const [webversion, setWebVersion] = useState("");
     const [queryState, updateQueryState] = useState(QueryState.NOT_SUBMITTED);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getInfoSupported((response) => setWebVersion(response.data["version"]))
+    }, []);
 
     function handleSuccessfulQuery(response) {
         updateQueryState(QueryState.SUCCESS);
@@ -196,6 +202,11 @@ function App() {
         </Routes>
         {successToast}
         {failureToast}
+        <footer className="footer mt-auto py-3">
+          <div className="container justify-content-center text-center">
+            <span className="text-muted">Guidescan Web v{webversion}, Frontend v{packageInfo.version}</span>
+          </div>
+        </footer>
       </div>
     );
 }
